@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Input, Select, Tabs, TabsProps } from "antd";
+import { Tabs, TabsProps } from "antd";
 import React from "react";
 import { IElement } from "../../interface/element";
 import RulesElements from "./components/Rules";
+import MainFieldOptions from "./components/main";
+import DynamicStyles from "./components/styles";
 
 interface SelectedElementProps {
   formElements: IElement[];
@@ -17,12 +19,48 @@ const SelectedElement: React.FC<SelectedElementProps> = ({
 
   const handleKeyChange = (value: any, key: string) => {
     if (!findSelectedElement) return;
+    console.log(value, key);
+
     const newFormElements = formElements.map((formElement) => {
       if (formElement.id === findSelectedElement.id) {
-        return { ...formElement, [key]: value };
+        const device = findSelectedElement.device || "any";
+
+        if (
+          key === "width" ||
+          key === "height" ||
+          key === "color" ||
+          key === "marginTop" ||
+          key === "marginBottom" ||
+          key === "marginLeft" ||
+          key === "marginRight" ||
+          key === "color" ||
+          key === "backgroundColor"
+        ) {
+          const newStyle = formElement.style ? [...formElement.style] : [];
+          const existingStyleIndex = newStyle.findIndex(
+            (item) => item.device === device
+          );
+
+          if (existingStyleIndex !== -1) {
+            newStyle[existingStyleIndex] = {
+              ...newStyle[existingStyleIndex],
+              [key]: value,
+            };
+          } else {
+            newStyle.push({ device: device, [key]: value });
+          }
+
+          return { ...formElement, style: newStyle };
+        } else {
+          console.log(key, value);
+          console.log(formElement.id, findSelectedElement.id);
+          const updatedFormElement = { ...formElement, [key]: value };
+          return updatedFormElement;
+        }
       }
       return formElement;
     });
+
     setFormElements(newFormElements);
   };
 
@@ -41,94 +79,29 @@ const SelectedElement: React.FC<SelectedElementProps> = ({
       key: "1",
       label: "Main",
       children: (
-        <>
-          <label
-            htmlFor="key"
-            style={{ display: "block", marginBottom: "0.5rem" }}
-          >
-            Key{" "}
-          </label>
-          <Input
-            placeholder="Enter Key"
-            onChange={(e) => handleKeyChange(e.target.value, "key")}
-            value={findSelectedElement.key}
-          />
-          <label
-            htmlFor="label"
-            style={{ display: "block", marginBottom: "0.5rem" }}
-          >
-            Label
-          </label>
-          <Input
-            placeholder="Enter Label"
-            onChange={(e) => handleKeyChange(e.target.value, "label")}
-            value={findSelectedElement.label}
-          />
-          <label
-            htmlFor="placeholder"
-            style={{ display: "block", marginBottom: "0.5rem" }}
-          >
-            Placeholder
-          </label>
-          <Input
-            placeholder="Enter Placeholder"
-            onChange={(e) => handleKeyChange(e.target.value, "placeholder")}
-            value={findSelectedElement.placeholder}
-          />
-          <label
-            htmlFor="style"
-            style={{ display: "block", marginBottom: "0.5rem" }}
-          >
-            Size
-          </label>
-          <Select
-            defaultValue="medium"
-            onChange={(e) => handleKeyChange(e, "size")}
-            value={findSelectedElement.size}
-            options={[
-              {
-                label: "Small",
-                value: "small",
-              },
-              {
-                label: "Middle",
-                value: "middle",
-              },
-              {
-                label: "Large",
-                value: "large",
-              },
-            ]}
-            style={{
-              width: "100%",
-            }}
-          />
-          <label
-            htmlFor="style"
-            style={{ display: "block", marginBottom: "0.5rem" }}
-          >
-            Value
-          </label>
-          <Input
-            placeholder="Enter Value"
-            onChange={(e) => handleKeyChange(e.target.value, "value")}
-            value={findSelectedElement.value}
-          />
-        </>
+        <MainFieldOptions
+          handleKeyChange={handleKeyChange}
+          findSelectedElement={findSelectedElement}
+        />
       ),
     },
     {
       key: "2",
       label: "Style",
-      children: "Content of Tab Pane 2",
+      children: (
+        <DynamicStyles
+          handleKeyChange={handleKeyChange}
+          findSelectedElement={findSelectedElement}
+        />
+      ),
     },
     {
       key: "3",
       label: "Rules",
       children: (
         <RulesElements
-          formElements={formElements}
-          setFormElements={setFormElements}
+          handleKeyChange={handleKeyChange}
+          findSelectedElement={findSelectedElement}
         />
       ),
     },

@@ -1,5 +1,5 @@
 import { Button, Card, Dropdown, Form, Input } from "antd";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 
 const items = [
   {
@@ -20,90 +20,137 @@ const items = [
   },
 ];
 
-const RulesElements = ({ formElements, setFormElements }: any) => {
-  const [cards, setCards] = useState([]);
+interface validationCard {
+  required?: boolean;
+  message?: string;
+  limit?: string | number;
+  type: string;
+}
 
-  const onFinish = (values: any) => {
-    console.log("Form values:", values);
-    const rules: any = [];
+const RulesElements = ({ handleKeyChange, findSelectedElement }: any) => {
+  const [validationCards, setValidationCards] = useState<validationCard[]>([]);
 
-    Object.entries(values).forEach(([key, value]: any) => {
-      if (key === "required") {
-        rules.push({ type: "required", message: value.message });
-      } else if (key === "length" || key === "min" || key === "max") {
-        rules.push({
-          type: key,
-          message: value.message,
-          limit: value.limit,
-        });
-      }
-    });
-
-    console.log({ rules });
-
-    const updatedElements = formElements.map((element) => {
-      if (element.active) {
-        const existingValidations = element.validations || [];
-        const isNewDataDifferent =
-          JSON.stringify(existingValidations) !== JSON.stringify(rules);
-        return isNewDataDifferent
-          ? { ...element, validations: rules }
-          : element;
-      }
-      return element;
-    });
-
-    console.log({ updatedElements });
-
-    setFormElements(updatedElements);
+  const onClick = (e: any) => {
+    const typeExists = validationCards.some((card) => card.type === e.key);
+    if (!typeExists) {
+      setValidationCards((prev) => [...prev, { required: true, type: e.key }]);
+    }
   };
 
-  const onClick = ({ key }) => {
-    setCards((prev) => [
-      ...prev,
-      {
-        name: key,
-      },
-    ]);
+  console.log({ validationCards });
+
+  const handleOptionChange = (
+    index: number,
+    type: string,
+    value: string,
+    field: string
+  ) => {
+    const updatedCards = [...validationCards];
+    const cardToUpdate = updatedCards[index];
+    if (cardToUpdate && cardToUpdate.type === type) {
+      cardToUpdate[field] = value;
+    }
+    setValidationCards(updatedCards);
+    handleKeyChange(updatedCards, "validations");
   };
-  console.log({ cards });
+
+  const handleRemoveOption = (index) => {
+    setValidationCards((prevCards) => {
+      const updatedCards = [...prevCards];
+      updatedCards.splice(index, 1);
+      return updatedCards;
+    });
+    handleKeyChange(validationCards, "validations");
+  };
+
+  useEffect(() => {
+    if (findSelectedElement?.validations) {
+      setValidationCards(findSelectedElement?.validations);
+    } else {
+      setValidationCards([]);
+    }
+  }, [findSelectedElement.id]);
+
   return (
-    <Form onFinish={onFinish}>
-      <div>
+    <>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         <Dropdown menu={{ items, onClick }} trigger={["click"]}>
-          <Button block>Add Validate Rules</Button>
+          <Button type="primary" block>
+            Add Validate Rules
+          </Button>
         </Dropdown>
-        {cards.map((card, index) => (
-          <Card key={index} style={{ margin: "10px" }} title={card.name}>
-            {card.name === "min" || card.name === "max" ? (
-              <>
-                <Form.Item name={[card.name, "message"]} label="Message">
-                  <Input />
+      </div>
+      <div>
+        {validationCards.map((validationCard, index) => (
+          <Card
+            key={index}
+            style={{ marginTop: "10px" }}
+            title={validationCard.type}
+            extra={
+              <Button
+                type="link"
+                danger
+                onClick={() => handleRemoveOption(index)}
+                style={{ marginBottom: "2px" }}
+              >
+                Remove
+              </Button>
+            }
+          >
+            <Form layout="vertical">
+              {validationCard.type === "required" && (
+                <Form.Item label="Message">
+                  <Input
+                    placeholder="Please input message"
+                    onChange={(e) =>
+                      handleOptionChange(
+                        index,
+                        validationCard.type,
+                        e.target.value,
+                        "message"
+                      )
+                    }
+                    value={validationCard?.message}
+                  />
                 </Form.Item>
-                <Form.Item
-                  name={[card.name, "limit"]}
-                  label="Limit"
-                  rules={[{ required: true }]}
-                >
-                  <Input type="number" />
-                </Form.Item>
-              </>
-            ) : (
-              <Form.Item name={[card.name, "message"]} label="Message">
-                <Input />
-              </Form.Item>
-            )}
+              )}
+              {validationCard.type === "max" && (
+                <>
+                  <Form.Item label="Message">
+                    <Input
+                      placeholder="Please input message"
+                      onChange={(e) =>
+                        handleOptionChange(
+                          index,
+                          validationCard.type,
+                          e.target.value,
+                          "message"
+                        )
+                      }
+                      value={validationCard?.message}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Limit">
+                    <Input
+                      placeholder="Please input message"
+                      onChange={(e) =>
+                        handleOptionChange(
+                          index,
+                          validationCard.type,
+                          e.target.value,
+                          "limit"
+                        )
+                      }
+                      value={validationCard?.limit}
+                    />
+                  </Form.Item>
+                </>
+              )}
+            </Form>
           </Card>
         ))}
-        <br />
-        <br />
-        <div>
-          <Button type="primary" htmlType="submit">
-            Save
-          </Button>
-        </div>
       </div>
-    </Form>
+    </>
   );
 };
 

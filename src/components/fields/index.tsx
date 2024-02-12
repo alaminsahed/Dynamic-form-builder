@@ -1,35 +1,41 @@
 import {
+  ArrowsAltOutlined,
   CalendarOutlined,
   CheckCircleOutlined,
   CheckSquareOutlined,
   DownOutlined,
   EditOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 
 export const fields = [
   {
-    type: 'text',
+    type: "text",
     icon: <EditOutlined />,
-    title: 'Input',
+    title: "Input",
   },
   {
-    type: 'checkbox',
+    type: "checkbox",
     icon: <CheckSquareOutlined />,
-    title: 'Checkbox',
+    title: "Checkbox",
   },
   {
-    type: 'datepicker',
+    type: "datepicker",
     icon: <CalendarOutlined />,
-    title: 'DatePicker',
+    title: "DatePicker",
   },
   {
-    type: 'dropdown',
+    type: "dropdown",
     icon: <DownOutlined />,
-    title: 'Dropdown',
+    title: "Dropdown",
   },
   {
-    type: 'radio',
+    type: "radio",
     icon: <CheckCircleOutlined />,
-    title: 'Radio',
+    title: "Radio",
+  },
+  {
+    type: "button",
+    icon: <ArrowsAltOutlined />,
+    title: "Button",
   },
 ];

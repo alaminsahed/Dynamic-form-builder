@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Form, Input, message } from "antd";
+import { Button, Form, Input, Select, message } from "antd";
 import _ from "lodash";
 import React from "react";
 import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DraggableFields } from "..";
-import { IElement } from "../../interface/element";
+import { IElement, IElementBtnOptions } from "../../interface/element";
 
 interface FormBuilderProps {
-  formElements: IElement[];
+  formElements: IElement[] | IElementBtnOptions[];
   setFormElements: React.Dispatch<React.SetStateAction<IElement[]>>;
 }
 
@@ -17,7 +17,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   setFormElements,
 }) => {
   const [{ canDrop, isOver }, drop] = useDrop({
-    accept: "text",
+    accept: ["text", "button", "dropdown"],
     drop: (item: {
       type:
         | "text"
@@ -25,7 +25,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         | "checkbox"
         | "dropdown"
         | "textarea"
-        | "datepicker";
+        | "datepicker"
+        | "button";
       id: number;
     }) => handleDrop(item),
     collect: (monitor) => ({
@@ -41,7 +42,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       | "checkbox"
       | "dropdown"
       | "textarea"
-      | "datepicker";
+      | "datepicker"
+      | "button";
     id: number;
   }) => {
     const id = Number(_.uniqueId());
@@ -52,7 +54,14 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         ...item,
         id,
         key: item.type + "_" + id,
-        label: item.type === "text" ? "Input" : "",
+        label:
+          item.type === "text"
+            ? "Input"
+            : item.type === "button"
+            ? "Button"
+            : item.type === "dropdown"
+            ? "Dropdown"
+            : null,
         size: "middle",
         index: newIndex,
       },
@@ -81,7 +90,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           return true;
         }
         if (validation.type === "max" && value > validation.limit) {
-          message.error(`Maximum value is ${validation.limit}`);
+          message.error(validation.message);
           return true;
         }
 
@@ -130,29 +139,70 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                 setFormElements(newFormElements);
               }}
             >
-              {element.type === "text" ? (
-                <Form.Item
-                  key={element.id}
-                  label={element.label}
-                  rules={element?.validations?.map((validation) => ({
-                    [validation.type]: [
-                      {
-                        validator: (_, value) =>
-                          validateInput(value, element.validations),
-                      },
-                    ],
-                  }))}
-                >
-                  <Input
-                    placeholder={element.placeholder || ""}
-                    style={element.style}
-                    size={element.size}
-                    onBlur={(e) =>
-                      validateInput(e.target.value, element.validations)
-                    }
-                  />
-                </Form.Item>
-              ) : null}
+              <Form layout="vertical">
+                {element.type === "text" && (
+                  <Form.Item
+                    key={element.id}
+                    label={element.label}
+                    rules={element?.validations?.map((validation) => ({
+                      [validation.type]: [
+                        {
+                          validator: (_, value) =>
+                            validateInput(value, element.validations),
+                        },
+                      ],
+                    }))}
+                  >
+                    <Input
+                      placeholder={element.placeholder || ""}
+                      size={element.size}
+                      onBlur={(e) =>
+                        validateInput(e.target.value, element.validations)
+                      }
+                      style={
+                        element.style && element.style.length > 0
+                          ? element.style.find(
+                              (s) =>
+                                s.device === "any" || s.device === "desktop"
+                            )
+                          : {}
+                      }
+                    />
+                  </Form.Item>
+                )}
+                {element.type === "dropdown" && (
+                  <Form.Item key={element.id} label={element.label}>
+                    <Select
+                      options={element.dropdownOptions || []}
+                      style={
+                        element.style && element.style.length > 0
+                          ? element.style.find(
+                              (s) =>
+                                s.device === "any" || s.device === "desktop"
+                            )
+                          : {}
+                      }
+                    />
+                  </Form.Item>
+                )}
+
+                {element.type === "button" && (
+                  <Form.Item key={element.id}>
+                    <Button
+                      size={element.size}
+                      style={element.style}
+                      danger={element.danger}
+                      block={element.block}
+                      htmlType={element.htmlType}
+                      disabled={element.disabled}
+                      shape={element.shape}
+                      type={element.appearance}
+                    >
+                      {element.label}
+                    </Button>
+                  </Form.Item>
+                )}
+              </Form>
             </div>
           </DraggableFields>
         ))}
