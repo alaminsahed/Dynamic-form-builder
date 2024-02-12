@@ -19,8 +19,6 @@ const SelectedElement: React.FC<SelectedElementProps> = ({
 
   const handleKeyChange = (value: any, key: string) => {
     if (!findSelectedElement) return;
-    console.log(value, key);
-
     const newFormElements = formElements.map((formElement) => {
       if (formElement.id === findSelectedElement.id) {
         const device = findSelectedElement.device || "any";
@@ -60,7 +58,6 @@ const SelectedElement: React.FC<SelectedElementProps> = ({
       }
       return formElement;
     });
-
     setFormElements(newFormElements);
   };
 
