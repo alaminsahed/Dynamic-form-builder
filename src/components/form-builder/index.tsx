@@ -1,71 +1,77 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button, Form, Input, Select, message } from "antd";
-import _ from "lodash";
-import React from "react";
-import { DndProvider, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { DraggableFields } from "..";
-import { IElement, IElementBtnOptions } from "../../interface/element";
+import { Button, Checkbox, Form, Input, Select, message } from 'antd';
+import _ from 'lodash';
+import React from 'react';
+import { DndProvider, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DraggableFields } from '../draggable-fields';
+import {
+  FormType,
+  IElement,
+  IElementBtnOptions,
+} from '../../interface/element';
 
 interface FormBuilderProps {
   formElements: IElement[] | IElementBtnOptions[];
   setFormElements: React.Dispatch<React.SetStateAction<IElement[]>>;
 }
 
+const formLabel = (element) => {
+  switch (element.type) {
+    case 'text':
+      return 'Input';
+    case 'button':
+      return 'Button';
+    case 'dropdown':
+      return 'Dropdown';
+    case 'checkbox':
+      return 'Checkbox';
+    default:
+      return '';
+  }
+};
+
 const FormBuilder: React.FC<FormBuilderProps> = ({
   formElements,
   setFormElements,
 }) => {
   const [{ canDrop, isOver }, drop] = useDrop({
-    accept: ["text", "button", "dropdown"],
-    drop: (item: {
-      type:
-        | "text"
-        | "radio"
-        | "checkbox"
-        | "dropdown"
-        | "textarea"
-        | "datepicker"
-        | "button";
-      id: number;
-    }) => handleDrop(item),
+    accept: ['text', 'button', 'dropdown', 'checkbox'],
+    drop: (item: { type: FormType; id: number }) => handleDrop(item),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
   });
 
-  const handleDrop = (item: {
-    type:
-      | "text"
-      | "radio"
-      | "checkbox"
-      | "dropdown"
-      | "textarea"
-      | "datepicker"
-      | "button";
-    id: number;
-  }) => {
+  const handleDrop = (item: { type: FormType; id: number }) => {
     const id = Number(_.uniqueId());
     const newIndex = formElements.length;
-    setFormElements([
-      ...formElements,
-      {
-        ...item,
-        id,
-        key: item.type + "_" + id,
-        label:
-          item.type === "text"
-            ? "Input"
-            : item.type === "button"
-            ? "Button"
-            : item.type === "dropdown"
-            ? "Dropdown"
-            : null,
-        size: "middle",
-        index: newIndex,
-      },
-    ]);
+    const newElement: any = {
+      ...item,
+      id,
+      key: item.type + '_' + id,
+      label: formLabel(item),
+      size: 'middle',
+      index: newIndex,
+    };
+
+    if (item.type === 'checkbox') {
+      newElement.checkboxOptions = [
+        { label: 'Option 1', value: 'Option 1' },
+        { label: 'Option 2', value: 'Option 2' },
+        { label: 'Option 3', value: 'Option 3' },
+      ];
+    }
+    if (item.type === 'dropdown') {
+      newElement.dropdownOptions = [
+        { label: 'Option 1', value: 'Option 1' },
+        { label: 'Option 2', value: 'Option 2' },
+        { label: 'Option 3', value: 'Option 3' },
+      ];
+    }
+
+    setFormElements([...formElements, newElement]);
   };
 
   const moveElement = (dragIndex: number, hoverIndex: number) => {
@@ -85,16 +91,16 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const validateInput = (value: any, validations: any) => {
     if (
       validations?.some((validation) => {
-        if (validation.type === "min" && value < validation.limit) {
+        if (validation.type === 'min' && value < validation.limit) {
           message.error(validation.message);
           return true;
         }
-        if (validation.type === "max" && value > validation.limit) {
+        if (validation.type === 'max' && value > validation.limit) {
           message.error(validation.message);
           return true;
         }
 
-        if (validation.type === "required" && !value) {
+        if (validation.type === 'required' && !value) {
           message.error(validation.message);
           return true;
         }
@@ -112,7 +118,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       <div
         ref={drop}
         style={{
-          height: "calc(100vh - 200px)",
+          height: 'calc(100vh - 200px)',
         }}
       >
         {formElements.map((element) => (
@@ -125,8 +131,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
             <div
               key={element.id}
               style={{
-                border: element.active ? "2px solid blue" : "none",
-                padding: "10px",
+                border: element.active ? '2px solid blue' : 'none',
+                padding: '10px',
               }}
               onClick={(e) => {
                 e.stopPropagation();
@@ -140,7 +146,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
               }}
             >
               <Form layout="vertical">
-                {element.type === "text" && (
+                {element.type === 'text' && (
                   <Form.Item
                     key={element.id}
                     label={element.label}
@@ -154,7 +160,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                     }))}
                   >
                     <Input
-                      placeholder={element.placeholder || ""}
+                      placeholder={element.placeholder || ''}
                       size={element.size}
                       onBlur={(e) =>
                         validateInput(e.target.value, element.validations)
@@ -163,30 +169,35 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                         element.style && element.style.length > 0
                           ? element.style.find(
                               (s) =>
-                                s.device === "any" || s.device === "desktop"
+                                s.device === 'any' || s.device === 'desktop'
                             )
                           : {}
                       }
                     />
                   </Form.Item>
                 )}
-                {element.type === "dropdown" && (
+                {element.type === 'dropdown' && (
                   <Form.Item key={element.id} label={element.label}>
                     <Select
+                      placeholder={element.placeholder || ''}
                       options={element.dropdownOptions || []}
                       style={
                         element.style && element.style.length > 0
                           ? element.style.find(
                               (s) =>
-                                s.device === "any" || s.device === "desktop"
+                                s.device === 'any' || s.device === 'desktop'
                             )
                           : {}
                       }
                     />
                   </Form.Item>
                 )}
-
-                {element.type === "button" && (
+                {element.type === 'checkbox' && (
+                  <Form.Item key={element.id} label={element.label}>
+                    <Checkbox.Group options={element?.checkboxOptions || []} />
+                  </Form.Item>
+                )}
+                {element.type === 'button' && (
                   <Form.Item key={element.id}>
                     <Button
                       size={element.size}
@@ -207,7 +218,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           </DraggableFields>
         ))}
         {isOver && canDrop && (
-          <div style={{ height: "30px", backgroundColor: "yellow" }}></div>
+          <div style={{ height: '30px', backgroundColor: 'yellow' }}></div>
         )}
       </div>
     </DndProvider>

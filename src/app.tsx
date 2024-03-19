@@ -1,20 +1,20 @@
-import { Button, Card, Col, Row, Space } from "antd";
-import { useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { Button, Card, Col, Row, Space } from 'antd';
+import { useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
   DraggableItem,
   FormBuilder,
   SelectedElement,
   fields,
-} from "./components";
-import { IElement } from "./interface/element";
-import FormPreview from "./components/form-preview";
+} from './components';
+import { IElement } from './interface/element';
+import FormPreview from './components/form-preview';
 
 const App = () => {
   const [formElements, setFormElements] = useState<IElement[]>([]);
   const [isPreview, setIsPreview] = useState(false);
-  const [responsiveView, setResponsiveView] = useState("desktop");
+  const [responsiveView, setResponsiveView] = useState('desktop');
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -35,23 +35,23 @@ const App = () => {
           </Card>
         </Col>
         <Col span={12}>
-          <div style={{ margin: "10px" }}>
+          <div style={{ margin: '10px' }}>
             <Space>
               <Button
-                onClick={() => setResponsiveView("desktop")}
-                type={responsiveView === "desktop" ? "primary" : "default"}
+                onClick={() => setResponsiveView('desktop')}
+                type={responsiveView === 'desktop' ? 'primary' : 'default'}
               >
                 Desktop
               </Button>
               <Button
-                onClick={() => setResponsiveView("mobile")}
-                type={responsiveView === "mobile" ? "primary" : "default"}
+                onClick={() => setResponsiveView('mobile')}
+                type={responsiveView === 'mobile' ? 'primary' : 'default'}
               >
                 Mobile
               </Button>
               <Button
-                onClick={() => setResponsiveView("tablet")}
-                type={responsiveView === "tablet" ? "primary" : "default"}
+                onClick={() => setResponsiveView('tablet')}
+                type={responsiveView === 'tablet' ? 'primary' : 'default'}
               >
                 Tablet
               </Button>
@@ -62,7 +62,12 @@ const App = () => {
               )}
             </Space>
           </div>
-          <Card title="Form Preview">
+          <Card
+            title={isPreview ? 'Form Preview' : 'Form Builder'}
+            style={{
+              overflowY: 'scroll',
+            }}
+          >
             {!isPreview ? (
               <FormBuilder
                 formElements={formElements}
