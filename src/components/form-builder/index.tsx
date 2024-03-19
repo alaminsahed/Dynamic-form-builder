@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Checkbox, Form, Input, Select, message } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { DndProvider, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DeleteOutlined } from '@ant-design/icons';
+
 import { DraggableFields } from '../draggable-fields';
 import {
   FormType,
@@ -120,103 +121,151 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         style={{
           height: 'calc(100vh - 200px)',
         }}
+        onClick={(e) => {
+          e.stopPropagation();
+          const newFormElements = formElements.map((formElement) => {
+            return { ...formElement, active: false };
+          });
+          setFormElements(newFormElements);
+        }}
       >
-        {formElements.map((element) => (
-          <DraggableFields
-            key={element.id}
-            id={element.id}
-            index={element.index}
-            moveElement={moveElement}
-          >
-            <div
+        {formElements.length > 0 ? (
+          formElements.map((element) => (
+            <DraggableFields
               key={element.id}
-              style={{
-                border: element.active ? '2px solid blue' : 'none',
-                padding: '10px',
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                const newFormElements = formElements.map((formElement) => {
-                  if (formElement.id === element.id) {
-                    return { ...formElement, active: true };
-                  }
-                  return { ...formElement, active: false };
-                });
-                setFormElements(newFormElements);
-              }}
+              id={element.id}
+              index={element.index}
+              moveElement={moveElement}
             >
-              <Form layout="vertical">
-                {element.type === 'text' && (
-                  <Form.Item
-                    key={element.id}
-                    label={element.label}
-                    rules={element?.validations?.map((validation) => ({
-                      [validation.type]: [
-                        {
-                          validator: (_, value) =>
-                            validateInput(value, element.validations),
-                        },
-                      ],
-                    }))}
-                  >
-                    <Input
-                      placeholder={element.placeholder || ''}
-                      size={element.size}
-                      onBlur={(e) =>
-                        validateInput(e.target.value, element.validations)
-                      }
-                      style={
-                        element.style && element.style.length > 0
-                          ? element.style.find(
-                              (s) =>
-                                s.device === 'any' || s.device === 'desktop'
-                            )
-                          : {}
-                      }
-                    />
-                  </Form.Item>
-                )}
-                {element.type === 'dropdown' && (
-                  <Form.Item key={element.id} label={element.label}>
-                    <Select
-                      placeholder={element.placeholder || ''}
-                      options={element.dropdownOptions || []}
-                      style={
-                        element.style && element.style.length > 0
-                          ? element.style.find(
-                              (s) =>
-                                s.device === 'any' || s.device === 'desktop'
-                            )
-                          : {}
-                      }
-                    />
-                  </Form.Item>
-                )}
-                {element.type === 'checkbox' && (
-                  <Form.Item key={element.id} label={element.label}>
-                    <Checkbox.Group options={element?.checkboxOptions || []} />
-                  </Form.Item>
-                )}
-                {element.type === 'button' && (
-                  <Form.Item key={element.id}>
-                    <Button
-                      size={element.size}
-                      style={element.style}
-                      danger={element.danger}
-                      block={element.block}
-                      htmlType={element.htmlType}
-                      disabled={element.disabled}
-                      shape={element.shape}
-                      type={element.appearance}
+              <div
+                key={element.id}
+                style={{
+                  border: element.active ? '2px solid blue' : 'none',
+                  padding: element.active ? '10px' : '5px',
+                  borderRadius: '5px',
+                  position: 'relative',
+                  transition: '200ms all ease-in-out',
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const newFormElements = formElements.map((formElement) => {
+                    if (formElement.id === element.id) {
+                      return { ...formElement, active: true };
+                    }
+                    return { ...formElement, active: false };
+                  });
+                  setFormElements(newFormElements);
+                }}
+              >
+                <Form layout="vertical">
+                  {element.type === 'text' && (
+                    <Form.Item
+                      key={element.id}
+                      label={element.label}
+                      rules={element?.validations?.map((validation) => ({
+                        [validation.type]: [
+                          {
+                            validator: (_, value) =>
+                              validateInput(value, element.validations),
+                          },
+                        ],
+                      }))}
                     >
-                      {element.label}
-                    </Button>
-                  </Form.Item>
+                      <Input
+                        placeholder={element.placeholder || ''}
+                        size={element.size}
+                        onBlur={(e) =>
+                          validateInput(e.target.value, element.validations)
+                        }
+                        style={
+                          element.style && element.style.length > 0
+                            ? element.style.find(
+                                (s) =>
+                                  s.device === 'any' || s.device === 'desktop'
+                              )
+                            : {}
+                        }
+                      />
+                    </Form.Item>
+                  )}
+                  {element.type === 'dropdown' && (
+                    <Form.Item key={element.id} label={element.label}>
+                      <Select
+                        placeholder={element.placeholder || ''}
+                        options={element.dropdownOptions || []}
+                        style={
+                          element.style && element.style.length > 0
+                            ? element.style.find(
+                                (s) =>
+                                  s.device === 'any' || s.device === 'desktop'
+                              )
+                            : {}
+                        }
+                      />
+                    </Form.Item>
+                  )}
+                  {element.type === 'checkbox' && (
+                    <Form.Item key={element.id} label={element.label}>
+                      <Checkbox.Group
+                        options={element?.checkboxOptions || []}
+                      />
+                    </Form.Item>
+                  )}
+                  {element.type === 'button' && (
+                    <Form.Item key={element.id}>
+                      <Button
+                        size={element.size}
+                        style={element.style}
+                        danger={element.danger}
+                        block={element.block}
+                        htmlType={element.htmlType}
+                        disabled={element.disabled}
+                        shape={element.shape}
+                        type={element.appearance}
+                      >
+                        {element.label}
+                      </Button>
+                    </Form.Item>
+                  )}
+                </Form>
+                {element.active && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: -40,
+                      right: 0,
+                    }}
+                  >
+                    <Button
+                      type="primary"
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const newFormElements = formElements.filter(
+                          (formElement) => formElement.id !== element.id
+                        );
+                        setFormElements(newFormElements);
+                      }}
+                    />
+                  </div>
                 )}
-              </Form>
-            </div>
-          </DraggableFields>
-        ))}
+              </div>
+            </DraggableFields>
+          ))
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <h2>No Elements</h2>
+            <p>Drag and drop elements here</p>
+          </div>
+        )}
         {isOver && canDrop && (
           <div style={{ height: '30px', backgroundColor: 'yellow' }}></div>
         )}
