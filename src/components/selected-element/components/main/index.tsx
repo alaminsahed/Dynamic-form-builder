@@ -164,6 +164,58 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
           </div>
         </>
       )}
+      {findSelectedElement.type === 'textarea' && (
+        <>
+          <div
+            style={{
+              marginBottom: '0.5rem',
+            }}
+          >
+            <label
+              htmlFor="autoSize"
+              style={{
+                display: 'block',
+                marginBottom: '0.2rem',
+              }}
+            >
+              Auto Size
+            </label>
+            <div
+              style={{
+                display: 'flex',
+                gap: '0.5rem',
+              }}
+            >
+              <Input
+                placeholder="Enter Min Rows"
+                onChange={(e) =>
+                  handleKeyChange(
+                    {
+                      ...findSelectedElement.autoSize,
+                      minRows: e.target.value,
+                    },
+                    'autoSize'
+                  )
+                }
+                value={findSelectedElement.autoSize?.minRows}
+              />
+              <Input
+                placeholder="Enter Max Rows"
+                onChange={(e) =>
+                  handleKeyChange(
+                    {
+                      ...findSelectedElement.autoSize,
+                      maxRows: e.target.value,
+                    },
+                    'autoSize'
+                  )
+                }
+                value={findSelectedElement.autoSize?.maxRows}
+              />
+            </div>
+          </div>
+        </>
+      )}
       {findSelectedElement.type === 'text' && (
         <>
           <div
@@ -225,20 +277,38 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
               }}
             />
           </div>
-          <div
-            style={{
-              marginBottom: '0.5rem',
-            }}
-          >
-            <Checkbox
-              checked={(findSelectedElement as IElement).disabled}
-              onChange={(e) => handleKeyChange(e.target.checked, 'disabled')}
-            >
-              {' '}
-              Disabled{' '}
-            </Checkbox>
-          </div>
         </>
+      )}
+      {(findSelectedElement.type === 'textarea' ||
+        findSelectedElement.type === 'text') && (
+        <div
+          style={{
+            marginBottom: '0.5rem',
+          }}
+        >
+          <Checkbox
+            checked={(findSelectedElement as IElement).disabled}
+            onChange={(e) => handleKeyChange(e.target.checked, 'disabled')}
+          >
+            {' '}
+            Disabled{' '}
+          </Checkbox>
+        </div>
+      )}
+      {findSelectedElement.type === 'textarea' && (
+        <div
+          style={{
+            marginBottom: '0.5rem',
+          }}
+        >
+          <Checkbox
+            checked={(findSelectedElement as IElement).showCount}
+            onChange={(e) => handleKeyChange(e.target.checked, 'showCount')}
+          >
+            {' '}
+            Show Count
+          </Checkbox>
+        </div>
       )}
       {findSelectedElement.inputType === 'password' && (
         <div

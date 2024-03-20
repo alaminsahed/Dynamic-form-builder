@@ -5,6 +5,8 @@ import {
   CheckSquareOutlined,
   DownOutlined,
   EditOutlined,
+  OrderedListOutlined,
+  CreditCardOutlined,
 } from '@ant-design/icons';
 
 export const fields = [
@@ -12,6 +14,11 @@ export const fields = [
     type: 'text',
     icon: <EditOutlined />,
     title: 'Input',
+  },
+  {
+    type: 'textarea',
+    icon: <OrderedListOutlined />,
+    title: 'Textarea',
   },
   {
     type: 'checkbox',
@@ -33,9 +40,20 @@ export const fields = [
     icon: <CheckCircleOutlined />,
     title: 'Radio',
   },
+];
+
+export const staticFields = [
   {
     type: 'button',
     icon: <ArrowsAltOutlined />,
     title: 'Button',
+  },
+];
+
+export const structures = [
+  {
+    type: 'section',
+    icon: <CreditCardOutlined />,
+    title: 'Section',
   },
 ];
