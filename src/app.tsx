@@ -1,4 +1,13 @@
-import { Button, Card, Col, Row, Space } from 'antd';
+import {
+  CloseOutlined,
+  DesktopOutlined,
+  DownloadOutlined,
+  EditOutlined,
+  EyeOutlined,
+  MobileOutlined,
+  TabletOutlined,
+} from '@ant-design/icons';
+import { Button, Card, Col, Row, Space, Tooltip } from 'antd';
 import { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -8,14 +17,29 @@ import {
   SelectedElement,
   fields,
 } from './components';
-import { IElement } from './interface/element';
 import FormPreview from './components/form-preview';
 import { structures } from './components/structure';
+import { IElement } from './interface/element';
 
 const App = () => {
   const [formElements, setFormElements] = useState<IElement[]>([]);
-  const [isPreview, setIsPreview] = useState(false);
-  const [responsiveView, setResponsiveView] = useState('desktop');
+  const [isPreview, setIsPreview] = useState<boolean>(false);
+  const [responsiveView, setResponsiveView] = useState<
+    'desktop' | 'mobile' | 'tablet'
+  >('desktop');
+
+  const onExport = () => {
+    const data = {
+      formElements,
+      responsiveView,
+    };
+    const element = document.createElement('a');
+    const file = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    element.href = URL.createObjectURL(file);
+    element.download = 'form.json';
+    document.body.appendChild(element);
+    element.click();
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -75,26 +99,38 @@ const App = () => {
           </Card>
         </Col>
         <Col span={12}>
-          <div style={{ margin: '10px' }}>
+          <div
+            style={{
+              margin: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
             <Space>
-              <Button
-                onClick={() => setResponsiveView('desktop')}
-                type={responsiveView === 'desktop' ? 'primary' : 'default'}
-              >
-                Desktop
-              </Button>
-              <Button
-                onClick={() => setResponsiveView('mobile')}
-                type={responsiveView === 'mobile' ? 'primary' : 'default'}
-              >
-                Mobile
-              </Button>
-              <Button
-                onClick={() => setResponsiveView('tablet')}
-                type={responsiveView === 'tablet' ? 'primary' : 'default'}
-              >
-                Tablet
-              </Button>
+              <Tooltip title="Desktop">
+                <Button
+                  onClick={() => setResponsiveView('desktop')}
+                  type={responsiveView === 'desktop' ? 'primary' : 'default'}
+                  icon={<DesktopOutlined />}
+                />
+              </Tooltip>
+              <Tooltip title="Mobile">
+                <Button
+                  onClick={() => setResponsiveView('mobile')}
+                  type={responsiveView === 'mobile' ? 'primary' : 'default'}
+                  icon={<MobileOutlined />}
+                />
+              </Tooltip>
+              <Tooltip title="Tablet">
+                <Button
+                  onClick={() => setResponsiveView('tablet')}
+                  type={responsiveView === 'tablet' ? 'primary' : 'default'}
+                  icon={<TabletOutlined />}
+                />
+              </Tooltip>
+            </Space>
+            <Space>
               {!isPreview ? (
                 <Button
                   onClick={() => {
@@ -103,11 +139,43 @@ const App = () => {
                       prev.map((item) => ({ ...item, active: false }))
                     );
                   }}
+                  icon={<EyeOutlined />}
+                  disabled={formElements.length === 0}
                 >
                   Preview
                 </Button>
               ) : (
-                <Button onClick={() => setIsPreview(false)}>Edit</Button>
+                <Button
+                  onClick={() => setIsPreview(false)}
+                  icon={<EditOutlined />}
+                >
+                  Edit
+                </Button>
+              )}
+            </Space>
+            <Space>
+              {formElements.length > 0 && (
+                <>
+                  <Tooltip title="Clear Form">
+                    <Button
+                      onClick={() => {
+                        setFormElements([]);
+                      }}
+                      icon={<CloseOutlined />}
+                      htmlType="button"
+                      type="default"
+                      danger
+                    />
+                  </Tooltip>
+                  <Tooltip title="Export JSON">
+                    <Button
+                      type="default"
+                      onClick={onExport}
+                      icon={<DownloadOutlined />}
+                      htmlType="button"
+                    />
+                  </Tooltip>
+                </>
               )}
             </Space>
           </div>
