@@ -4,6 +4,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Radio,
   Select,
   message,
 } from 'antd';
@@ -35,6 +36,8 @@ const formLabel = (element) => {
       return 'Dropdown';
     case 'checkbox':
       return 'Checkbox';
+    case 'radio':
+      return 'Radio';
     default:
       return 'text';
   }
@@ -45,7 +48,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   setFormElements,
 }) => {
   const [{ canDrop, isOver }, drop] = useDrop({
-    accept: ['text', 'button', 'dropdown', 'checkbox'],
+    accept: ['text', 'button', 'dropdown', 'checkbox', 'radio'],
     drop: (item: { type: FormType; id: number }) => handleDrop(item),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -79,6 +82,13 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         { label: 'Option 3', value: 'Option 3' },
       ];
     }
+    if (item.type === 'radio') {
+      newElement.radioOptions = [
+        { label: 'Option 1', value: 'Option 1' },
+        { label: 'Option 2', value: 'Option 2' },
+        { label: 'Option 3', value: 'Option 3' },
+      ];
+    }
 
     setFormElements([...formElements, newElement]);
   };
@@ -86,10 +96,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const moveElement = (dragIndex: number, hoverIndex: number) => {
     const draggedElement = formElements[dragIndex];
     const updatedFormElements = [...formElements];
-
     updatedFormElements.splice(dragIndex, 1);
     updatedFormElements.splice(hoverIndex, 0, draggedElement);
-
     updatedFormElements.forEach((element, index) => {
       element.index = index;
     });
@@ -290,6 +298,11 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                       <Checkbox.Group
                         options={element?.checkboxOptions || []}
                       />
+                    </Form.Item>
+                  )}
+                  {element.type === 'radio' && (
+                    <Form.Item key={element.id} label={element.label}>
+                      <Radio.Group options={element?.radioOptions || []} />
                     </Form.Item>
                   )}
                   {element.type === 'button' && (

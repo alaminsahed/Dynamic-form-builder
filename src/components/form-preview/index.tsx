@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Checkbox, Form, Input, InputNumber, Select } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  InputNumber,
+  Radio,
+  Select,
+} from 'antd';
 import { IElement, IElementBtnOptions } from '../../interface/element';
 
 interface FormPreviewProps {
@@ -142,6 +150,11 @@ const FormPreview: React.FC<FormPreviewProps> = ({ formElements }) => {
           {element.type === 'checkbox' && (
             <Form.Item key={index} label={element.label}>
               <Checkbox.Group options={element.checkboxOptions || []} />
+            </Form.Item>
+          )}
+          {element.type === 'radio' && (
+            <Form.Item key={index} label={element.label}>
+              <Radio.Group options={element.radioOptions || []} />
             </Form.Item>
           )}
           {element.type === 'button' && (

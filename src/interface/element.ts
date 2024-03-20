@@ -15,6 +15,7 @@ export interface IElement {
   device?: string;
   dropdownOptions?: any;
   checkboxOptions?: any;
+  radioOptions?: any;
   inputType?: 'text' | 'password' | 'number' | 'search' | 'url';
   passwordMask?: boolean;
   disabled?: boolean;

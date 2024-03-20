@@ -1,10 +1,10 @@
 import { Button, Checkbox, Input, Select, Space } from 'antd';
+import { useEffect, useState } from 'react';
 import {
   FormType,
   IElement,
   IElementBtnOptions,
 } from '../../../../interface/element';
-import { useEffect, useState } from 'react';
 
 interface MainFieldOptionsProps {
   handleKeyChange: (value: any, key: string) => void;
@@ -34,7 +34,11 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
     setOptions(updatedOptions);
     handleKeyChange(
       updatedOptions,
-      type === 'checkbox' ? 'checkboxOptions' : 'dropdownOptions'
+      type === 'checkbox'
+        ? 'checkboxOptions'
+        : type === 'radio'
+        ? 'radioOptions'
+        : 'dropdownOptions'
     );
   };
 
@@ -44,7 +48,11 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
     setOptions(updatedOptions);
     handleKeyChange(
       updatedOptions,
-      type === 'checkbox' ? 'checkboxOptions' : 'dropdownOptions'
+      type === 'checkbox'
+        ? 'checkboxOptions'
+        : type === 'radio'
+        ? 'radioOptions'
+        : 'dropdownOptions'
     );
   };
 
@@ -53,6 +61,8 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
       setOptions(findSelectedElement.dropdownOptions);
     } else if (findSelectedElement.checkboxOptions) {
       setOptions(findSelectedElement.checkboxOptions);
+    } else if (findSelectedElement.radioOptions) {
+      setOptions(findSelectedElement.radioOptions);
     } else {
       setOptions([]);
     }
@@ -60,6 +70,7 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
     findSelectedElement.dropdownOptions,
     findSelectedElement.id,
     findSelectedElement.checkboxOptions,
+    findSelectedElement.radioOptions,
   ]);
 
   return (
@@ -381,7 +392,8 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
         </>
       )}
       {(findSelectedElement.type === 'dropdown' ||
-        findSelectedElement.type === 'checkbox') && (
+        findSelectedElement.type === 'checkbox' ||
+        findSelectedElement.type === 'radio') && (
         <>
           <label
             htmlFor="options"
