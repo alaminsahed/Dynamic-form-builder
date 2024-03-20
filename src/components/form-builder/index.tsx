@@ -91,6 +91,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         { label: 'Option 3', value: 'Option 3' },
       ];
     }
+    if (item.type === 'button') {
+      newElement.appearance = 'primary';
+      newElement.block = true;
+    }
 
     setFormElements([...formElements, newElement]);
   };
