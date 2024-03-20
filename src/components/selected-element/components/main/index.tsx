@@ -1,10 +1,10 @@
 import { Button, Checkbox, Input, Select, Space } from 'antd';
+import { useEffect, useState } from 'react';
 import {
   FormType,
   IElement,
   IElementBtnOptions,
 } from '../../../../interface/element';
-import { useEffect, useState } from 'react';
 
 interface MainFieldOptionsProps {
   handleKeyChange: (value: any, key: string) => void;
@@ -34,7 +34,11 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
     setOptions(updatedOptions);
     handleKeyChange(
       updatedOptions,
-      type === 'checkbox' ? 'checkboxOptions' : 'dropdownOptions'
+      type === 'checkbox'
+        ? 'checkboxOptions'
+        : type === 'radio'
+        ? 'radioOptions'
+        : 'dropdownOptions'
     );
   };
 
@@ -44,7 +48,11 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
     setOptions(updatedOptions);
     handleKeyChange(
       updatedOptions,
-      type === 'checkbox' ? 'checkboxOptions' : 'dropdownOptions'
+      type === 'checkbox'
+        ? 'checkboxOptions'
+        : type === 'radio'
+        ? 'radioOptions'
+        : 'dropdownOptions'
     );
   };
 
@@ -53,6 +61,8 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
       setOptions(findSelectedElement.dropdownOptions);
     } else if (findSelectedElement.checkboxOptions) {
       setOptions(findSelectedElement.checkboxOptions);
+    } else if (findSelectedElement.radioOptions) {
+      setOptions(findSelectedElement.radioOptions);
     } else {
       setOptions([]);
     }
@@ -60,87 +70,190 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
     findSelectedElement.dropdownOptions,
     findSelectedElement.id,
     findSelectedElement.checkboxOptions,
+    findSelectedElement.radioOptions,
   ]);
 
   return (
     <>
-      <label htmlFor="key" style={{ display: 'block', marginBottom: '0.5rem' }}>
-        Key{' '}
-      </label>
-      <Input
-        placeholder="Enter Key"
-        onChange={(e) => handleKeyChange(e.target.value, 'key')}
-        value={findSelectedElement.key}
-      />
-      <label
-        htmlFor="label"
-        style={{ display: 'block', marginBottom: '0.5rem' }}
+      <div
+        style={{
+          marginBottom: '0.5rem',
+        }}
       >
-        Label
-      </label>
-      <Input
-        placeholder="Enter Label"
-        onChange={(e) => handleKeyChange(e.target.value, 'label')}
-        value={findSelectedElement.label}
-      />
+        <label
+          htmlFor="key"
+          style={{ display: 'block', marginBottom: '0.2rem' }}
+        >
+          Key{' '}
+        </label>
+        <Input
+          placeholder="Enter Key"
+          onChange={(e) => handleKeyChange(e.target.value, 'key')}
+          value={findSelectedElement.key}
+        />
+      </div>
+      <div
+        style={{
+          marginBottom: '0.5rem',
+        }}
+      >
+        <label
+          htmlFor="label"
+          style={{ display: 'block', marginBottom: '0.2rem' }}
+        >
+          Label
+        </label>
+        <Input
+          placeholder="Enter Label"
+          onChange={(e) => handleKeyChange(e.target.value, 'label')}
+          value={findSelectedElement.label}
+        />
+      </div>
       {findSelectedElement.type !== 'checkbox' && (
         <>
-          <label
-            htmlFor="placeholder"
-            style={{ display: 'block', marginBottom: '0.5rem' }}
-          >
-            Placeholder
-          </label>
-          <Input
-            placeholder="Enter Placeholder"
-            onChange={(e) => handleKeyChange(e.target.value, 'placeholder')}
-            value={findSelectedElement.placeholder}
-          />
-          <label
-            htmlFor="style"
-            style={{ display: 'block', marginBottom: '0.5rem' }}
-          >
-            Size
-          </label>
-          <Select
-            defaultValue="medium"
-            onChange={(e) => handleKeyChange(e, 'size')}
-            value={findSelectedElement.size}
-            options={[
-              {
-                label: 'Small',
-                value: 'small',
-              },
-              {
-                label: 'Middle',
-                value: 'middle',
-              },
-              {
-                label: 'Large',
-                value: 'large',
-              },
-            ]}
+          <div
             style={{
-              width: '100%',
+              marginBottom: '0.5rem',
             }}
-          />
+          >
+            <label
+              htmlFor="placeholder"
+              style={{ display: 'block', marginBottom: '0.2rem' }}
+            >
+              Placeholder
+            </label>
+            <Input
+              placeholder="Enter Placeholder"
+              onChange={(e) => handleKeyChange(e.target.value, 'placeholder')}
+              value={findSelectedElement.placeholder}
+            />
+          </div>
+          <div
+            style={{
+              marginBottom: '0.5rem',
+            }}
+          >
+            <label
+              htmlFor="style"
+              style={{ display: 'block', marginBottom: '0.2rem' }}
+            >
+              Size
+            </label>
+            <Select
+              defaultValue="medium"
+              onChange={(e) => handleKeyChange(e, 'size')}
+              value={findSelectedElement.size}
+              options={[
+                {
+                  label: 'Small',
+                  value: 'small',
+                },
+                {
+                  label: 'Middle',
+                  value: 'middle',
+                },
+                {
+                  label: 'Large',
+                  value: 'large',
+                },
+              ]}
+              style={{
+                width: '100%',
+              }}
+            />
+          </div>
         </>
       )}
-
       {findSelectedElement.type === 'text' && (
         <>
-          <label
-            htmlFor="style"
-            style={{ display: 'block', marginBottom: '0.5rem' }}
+          <div
+            style={{
+              marginBottom: '0.5rem',
+            }}
           >
-            Value
-          </label>
-          <Input
-            placeholder="Enter Value"
-            onChange={(e) => handleKeyChange(e.target.value, 'value')}
-            value={findSelectedElement.value}
-          />
+            <label
+              htmlFor="style"
+              style={{ display: 'block', marginBottom: '0.2rem' }}
+            >
+              Value
+            </label>
+            <Input
+              placeholder="Enter Value"
+              onChange={(e) => handleKeyChange(e.target.value, 'value')}
+              value={findSelectedElement.value}
+            />
+          </div>
+          <div
+            style={{
+              marginBottom: '0.5rem',
+            }}
+          >
+            <label
+              htmlFor="style"
+              style={{ display: 'block', marginBottom: '0.2rem' }}
+            >
+              Type
+            </label>
+            <Select
+              defaultValue="text"
+              onChange={(e) => handleKeyChange(e, 'inputType')}
+              value={findSelectedElement.inputType}
+              options={[
+                {
+                  label: 'Text',
+                  value: 'text',
+                },
+                {
+                  label: 'Password',
+                  value: 'password',
+                },
+                {
+                  label: 'Number',
+                  value: 'number',
+                },
+                {
+                  label: 'Search',
+                  value: 'search',
+                },
+                {
+                  label: 'URL',
+                  value: 'url',
+                },
+              ]}
+              style={{
+                width: '100%',
+              }}
+            />
+          </div>
+          <div
+            style={{
+              marginBottom: '0.5rem',
+            }}
+          >
+            <Checkbox
+              checked={(findSelectedElement as IElement).disabled}
+              onChange={(e) => handleKeyChange(e.target.checked, 'disabled')}
+            >
+              {' '}
+              Disabled{' '}
+            </Checkbox>
+          </div>
         </>
+      )}
+      {findSelectedElement.inputType === 'password' && (
+        <div
+          style={{
+            marginBottom: '0.5rem',
+          }}
+        >
+          <Checkbox
+            checked={(findSelectedElement as IElement).passwordMask}
+            onChange={(e) => handleKeyChange(e.target.checked, 'passwordMask')}
+          >
+            {' '}
+            Password Mask{' '}
+          </Checkbox>
+        </div>
       )}
       {findSelectedElement.type === 'button' && (
         <>
@@ -279,7 +392,8 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
         </>
       )}
       {(findSelectedElement.type === 'dropdown' ||
-        findSelectedElement.type === 'checkbox') && (
+        findSelectedElement.type === 'checkbox' ||
+        findSelectedElement.type === 'radio') && (
         <>
           <label
             htmlFor="options"

@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Checkbox, Form, Input, Select } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  InputNumber,
+  Radio,
+  Select,
+} from 'antd';
 import { IElement, IElementBtnOptions } from '../../interface/element';
 
 interface FormPreviewProps {
@@ -22,31 +30,110 @@ const FormPreview: React.FC<FormPreviewProps> = ({ formElements }) => {
     });
   };
 
-  console.log({ formErrors });
+  const inputElementAndType = (element) => {
+    if (element.inputType === 'password' && element.passwordMask) {
+      return (
+        <Input.Password
+          placeholder={element.placeholder || ''}
+          size={element.size}
+          onBlur={(e) =>
+            validateInput(e.target.value, element.validations, element.key)
+          }
+          style={
+            element.style && element.style.length > 0
+              ? element.style.find(
+                  (s) => s.device === 'any' || s.device === 'desktop'
+                )
+              : {}
+          }
+          disabled={element.disabled}
+        />
+      );
+    } else if (element.inputType === 'number') {
+      return (
+        <InputNumber
+          placeholder={element.placeholder || ''}
+          size={element.size}
+          onBlur={(e) =>
+            validateInput(e.target.value, element.validations, element.key)
+          }
+          style={
+            element.style && element.style.length > 0
+              ? element.style.find(
+                  (s) => s.device === 'any' || s.device === 'desktop'
+                )
+              : {}
+          }
+          type="number"
+          disabled={element.disabled}
+        />
+      );
+    } else if (element.inputType === 'search') {
+      return (
+        <Input.Search
+          placeholder={element.placeholder || ''}
+          size={element.size}
+          onBlur={(e) =>
+            validateInput(e.target.value, element.validations, element.key)
+          }
+          style={
+            element.style && element.style.length > 0
+              ? element.style.find(
+                  (s) => s.device === 'any' || s.device === 'desktop'
+                )
+              : {}
+          }
+          disabled={element.disabled}
+        />
+      );
+    } else if (element.inputType === 'url') {
+      return (
+        <Input
+          addonBefore="https://"
+          placeholder={element.placeholder || ''}
+          size={element.size}
+          onBlur={(e) =>
+            validateInput(e.target.value, element.validations, element.key)
+          }
+          style={
+            element.style && element.style.length > 0
+              ? element.style.find(
+                  (s) => s.device === 'any' || s.device === 'desktop'
+                )
+              : {}
+          }
+          disabled={element.disabled}
+        />
+      );
+    } else {
+      return (
+        <Input
+          type={element.inputType === 'password' ? 'password' : 'text'}
+          placeholder={element.placeholder || ''}
+          size={element.size}
+          onBlur={(e) =>
+            validateInput(e.target.value, element.validations, element.key)
+          }
+          style={
+            element.style && element.style.length > 0
+              ? element.style.find(
+                  (s) => s.device === 'any' || s.device === 'desktop'
+                )
+              : {}
+          }
+          disabled={element.disabled}
+        />
+      );
+    }
+  };
+
   return (
     <Form layout="vertical">
       {formElements.map((element, index) => (
         <React.Fragment key={index}>
           {element.type === 'text' && (
             <Form.Item label={element.label}>
-              <Input
-                placeholder={element.placeholder || ''}
-                size={element.size}
-                onBlur={(e) =>
-                  validateInput(
-                    e.target.value,
-                    element.validations,
-                    element.key
-                  )
-                }
-                style={
-                  element.style && element.style.length > 0
-                    ? element.style.find(
-                        (s) => s.device === 'any' || s.device === 'desktop'
-                      )
-                    : {}
-                }
-              />
+              {inputElementAndType(element)}
               {formErrors[element.key] && (
                 <div style={{ color: 'red' }}>{formErrors[element.key]}</div>
               )}
@@ -63,6 +150,11 @@ const FormPreview: React.FC<FormPreviewProps> = ({ formElements }) => {
           {element.type === 'checkbox' && (
             <Form.Item key={index} label={element.label}>
               <Checkbox.Group options={element.checkboxOptions || []} />
+            </Form.Item>
+          )}
+          {element.type === 'radio' && (
+            <Form.Item key={index} label={element.label}>
+              <Radio.Group options={element.radioOptions || []} />
             </Form.Item>
           )}
           {element.type === 'button' && (

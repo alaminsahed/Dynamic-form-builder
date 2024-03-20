@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Tabs, TabsProps } from "antd";
-import React from "react";
-import { IElement } from "../../interface/element";
-import RulesElements from "./components/Rules";
-import MainFieldOptions from "./components/main";
-import DynamicStyles from "./components/styles";
+import { Tabs, TabsProps } from 'antd';
+import React from 'react';
+import { IElement } from '../../interface/element';
+import RulesElements from './components/Rules';
+import MainFieldOptions from './components/main';
+import DynamicStyles from './components/styles';
 
 interface SelectedElementProps {
   formElements: IElement[];
@@ -21,24 +21,22 @@ const SelectedElement: React.FC<SelectedElementProps> = ({
     if (!findSelectedElement) return;
     const newFormElements = formElements.map((formElement) => {
       if (formElement.id === findSelectedElement.id) {
-        const device = findSelectedElement.device || "any";
-
+        const device = findSelectedElement.device || 'any';
         if (
-          key === "width" ||
-          key === "height" ||
-          key === "color" ||
-          key === "marginTop" ||
-          key === "marginBottom" ||
-          key === "marginLeft" ||
-          key === "marginRight" ||
-          key === "color" ||
-          key === "backgroundColor"
+          key === 'width' ||
+          key === 'height' ||
+          key === 'color' ||
+          key === 'marginTop' ||
+          key === 'marginBottom' ||
+          key === 'marginLeft' ||
+          key === 'marginRight' ||
+          key === 'color' ||
+          key === 'backgroundColor'
         ) {
           const newStyle = formElement.style ? [...formElement.style] : [];
           const existingStyleIndex = newStyle.findIndex(
             (item) => item.device === device
           );
-
           if (existingStyleIndex !== -1) {
             newStyle[existingStyleIndex] = {
               ...newStyle[existingStyleIndex],
@@ -47,7 +45,6 @@ const SelectedElement: React.FC<SelectedElementProps> = ({
           } else {
             newStyle.push({ device: device, [key]: value });
           }
-
           return { ...formElement, style: newStyle };
         } else {
           console.log(key, value);
@@ -71,10 +68,10 @@ const SelectedElement: React.FC<SelectedElementProps> = ({
 
   console.log({ formElements });
 
-  const items: TabsProps["items"] = [
+  const items: TabsProps['items'] = [
     {
-      key: "1",
-      label: "Main",
+      key: '1',
+      label: 'Main',
       children: (
         <MainFieldOptions
           handleKeyChange={handleKeyChange}
@@ -83,8 +80,8 @@ const SelectedElement: React.FC<SelectedElementProps> = ({
       ),
     },
     {
-      key: "2",
-      label: "Style",
+      key: '2',
+      label: 'Style',
       children: (
         <DynamicStyles
           handleKeyChange={handleKeyChange}
@@ -93,8 +90,8 @@ const SelectedElement: React.FC<SelectedElementProps> = ({
       ),
     },
     {
-      key: "3",
-      label: "Rules",
+      key: '3',
+      label: 'Rules',
       children: (
         <RulesElements
           handleKeyChange={handleKeyChange}
