@@ -10,6 +10,7 @@ import {
 } from './components';
 import { IElement } from './interface/element';
 import FormPreview from './components/form-preview';
+import { structures } from './components/structure';
 
 const App = () => {
   const [formElements, setFormElements] = useState<IElement[]>([]);
@@ -21,17 +22,56 @@ const App = () => {
       <Row gutter={16}>
         <Col span={6}>
           <Card title="Form Elements">
-            <Row gutter={[8, 8]}>
-              {fields.map((field) => (
-                <Col span={12} key={field.type}>
-                  <DraggableItem
-                    type={field.type}
-                    placeholder={field.title}
-                    icon={field.icon}
-                  />
-                </Col>
-              ))}
-            </Row>
+            <div>
+              <label
+                htmlFor="form_fields"
+                style={{
+                  display: 'block',
+                  marginBottom: '10px',
+                }}
+              >
+                <strong>Form Fields</strong>
+              </label>
+              <Row gutter={[8, 8]}>
+                {fields.map((field) => (
+                  <Col span={12} key={field.type}>
+                    <DraggableItem
+                      type={field.type}
+                      placeholder={field.title}
+                      icon={field.icon}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </div>
+            <div
+              style={{
+                display: 'block',
+                marginBottom: '10px',
+                marginTop: '20px',
+              }}
+            >
+              <label
+                htmlFor="form_fields"
+                style={{
+                  display: 'block',
+                  marginBottom: '10px',
+                }}
+              >
+                <strong>Structure</strong>
+              </label>
+              <Row gutter={[8, 8]}>
+                {structures.map((field) => (
+                  <Col span={12} key={field.type}>
+                    <DraggableItem
+                      type={field.type}
+                      placeholder={field.title}
+                      icon={field.icon}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </div>
           </Card>
         </Col>
         <Col span={12}>
