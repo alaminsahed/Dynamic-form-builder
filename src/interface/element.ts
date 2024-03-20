@@ -19,6 +19,11 @@ export interface IElement {
   inputType?: 'text' | 'password' | 'number' | 'search' | 'url';
   passwordMask?: boolean;
   disabled?: boolean;
+  showCount?: boolean;
+  autoSize?: {
+    minRows: number;
+    maxRows: number;
+  };
 }
 
 export interface IElementBtnOptions extends IElement {

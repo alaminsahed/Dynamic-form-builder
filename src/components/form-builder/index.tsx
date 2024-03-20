@@ -38,6 +38,8 @@ const formLabel = (element) => {
       return 'Checkbox';
     case 'radio':
       return 'Radio';
+    case 'textarea':
+      return 'Textarea';
     default:
       return 'text';
   }
@@ -48,7 +50,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   setFormElements,
 }) => {
   const [{ canDrop, isOver }, drop] = useDrop({
-    accept: ['text', 'button', 'dropdown', 'checkbox', 'radio'],
+    accept: ['text', 'button', 'dropdown', 'checkbox', 'radio', 'textarea'],
     drop: (item: { type: FormType; id: number }) => handleDrop(item),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -275,6 +277,30 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                       }))}
                     >
                       {inputElementAndType(element)}
+                    </Form.Item>
+                  )}
+                  {element.type === 'textarea' && (
+                    <Form.Item key={element.id} label={element.label}>
+                      <Input.TextArea
+                        placeholder={element.placeholder || ''}
+                        size={element.size}
+                        onBlur={(e) =>
+                          validateInput(e.target.value, element.validations)
+                        }
+                        style={
+                          element.style && element.style.length > 0
+                            ? element.style.find(
+                                (s) =>
+                                  s.device === 'any' || s.device === 'desktop'
+                              )
+                            : {}
+                        }
+                        disabled={element.disabled}
+                        showCount={element?.showCount || false}
+                        autoSize={
+                          element?.autoSize || { minRows: 3, maxRows: 5 }
+                        }
+                      />
                     </Form.Item>
                   )}
                   {element.type === 'dropdown' && (

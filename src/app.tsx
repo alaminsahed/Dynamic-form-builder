@@ -16,9 +16,10 @@ import {
   FormBuilder,
   SelectedElement,
   fields,
+  staticFields,
+  structures,
 } from './components';
 import FormPreview from './components/form-preview';
-import { structures } from './components/structure';
 import { IElement } from './interface/element';
 
 const App = () => {
@@ -58,6 +59,29 @@ const App = () => {
               </label>
               <Row gutter={[8, 8]}>
                 {fields.map((field) => (
+                  <Col span={12} key={field.type}>
+                    <DraggableItem
+                      type={field.type}
+                      placeholder={field.title}
+                      icon={field.icon}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </div>
+            <div>
+              <label
+                htmlFor="form_fields"
+                style={{
+                  display: 'block',
+                  marginBottom: '10px',
+                  marginTop: '20px',
+                }}
+              >
+                <strong>Static</strong>
+              </label>
+              <Row gutter={[8, 8]}>
+                {staticFields.map((field) => (
                   <Col span={12} key={field.type}>
                     <DraggableItem
                       type={field.type}
