@@ -15,6 +15,9 @@ export interface IElement {
   device?: string;
   dropdownOptions?: any;
   checkboxOptions?: any;
+  inputType?: 'text' | 'password' | 'number' | 'search' | 'url';
+  passwordMask?: boolean;
+  disabled?: boolean;
 }
 
 export interface IElementBtnOptions extends IElement {

@@ -56,7 +56,16 @@ const App = () => {
                 Tablet
               </Button>
               {!isPreview ? (
-                <Button onClick={() => setIsPreview(true)}>Preview</Button>
+                <Button
+                  onClick={() => {
+                    setIsPreview(true);
+                    setFormElements((prev) =>
+                      prev.map((item) => ({ ...item, active: false }))
+                    );
+                  }}
+                >
+                  Preview
+                </Button>
               ) : (
                 <Button onClick={() => setIsPreview(false)}>Edit</Button>
               )}

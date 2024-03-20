@@ -1,4 +1,12 @@
-import { Button, Checkbox, Form, Input, Select, message } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  message,
+} from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { DndProvider, useDrop } from 'react-dnd';
@@ -28,7 +36,7 @@ const formLabel = (element) => {
     case 'checkbox':
       return 'Checkbox';
     default:
-      return '';
+      return 'text';
   }
 };
 
@@ -100,18 +108,105 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           message.error(validation.message);
           return true;
         }
-
         if (validation.type === 'required' && !value) {
           message.error(validation.message);
           return true;
         }
-
         return false;
       })
     ) {
       return false;
     }
     return true;
+  };
+
+  const inputElementAndType = (element) => {
+    if (element.inputType === 'password' && element.passwordMask) {
+      return (
+        <Input.Password
+          placeholder={element.placeholder || ''}
+          size={element.size}
+          onBlur={(e) => validateInput(e.target.value, element.validations)}
+          style={
+            element.style && element.style.length > 0
+              ? element.style.find(
+                  (s) => s.device === 'any' || s.device === 'desktop'
+                )
+              : {}
+          }
+          disabled={element.disabled}
+        />
+      );
+    } else if (element.inputType === 'number') {
+      return (
+        <InputNumber
+          placeholder={element.placeholder || ''}
+          size={element.size}
+          onBlur={(e) => validateInput(e.target.value, element.validations)}
+          style={
+            element.style && element.style.length > 0
+              ? element.style.find(
+                  (s) => s.device === 'any' || s.device === 'desktop'
+                )
+              : {
+                  width: '100%',
+                }
+          }
+          type="number"
+          disabled={element.disabled}
+        />
+      );
+    } else if (element.inputType === 'search') {
+      return (
+        <Input.Search
+          placeholder={element.placeholder || ''}
+          size={element.size}
+          onBlur={(e) => validateInput(e.target.value, element.validations)}
+          style={
+            element.style && element.style.length > 0
+              ? element.style.find(
+                  (s) => s.device === 'any' || s.device === 'desktop'
+                )
+              : {}
+          }
+          disabled={element.disabled}
+        />
+      );
+    } else if (element.inputType === 'url') {
+      return (
+        <Input
+          addonBefore="https://"
+          placeholder={element.placeholder || ''}
+          size={element.size}
+          onBlur={(e) => validateInput(e.target.value, element.validations)}
+          style={
+            element.style && element.style.length > 0
+              ? element.style.find(
+                  (s) => s.device === 'any' || s.device === 'desktop'
+                )
+              : {}
+          }
+          disabled={element.disabled}
+        />
+      );
+    } else {
+      return (
+        <Input
+          type={element.inputType === 'password' ? 'password' : 'text'}
+          placeholder={element.placeholder || ''}
+          size={element.size}
+          onBlur={(e) => validateInput(e.target.value, element.validations)}
+          style={
+            element.style && element.style.length > 0
+              ? element.style.find(
+                  (s) => s.device === 'any' || s.device === 'desktop'
+                )
+              : {}
+          }
+          disabled={element.disabled}
+        />
+      );
+    }
   };
 
   return (
@@ -171,21 +266,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                         ],
                       }))}
                     >
-                      <Input
-                        placeholder={element.placeholder || ''}
-                        size={element.size}
-                        onBlur={(e) =>
-                          validateInput(e.target.value, element.validations)
-                        }
-                        style={
-                          element.style && element.style.length > 0
-                            ? element.style.find(
-                                (s) =>
-                                  s.device === 'any' || s.device === 'desktop'
-                              )
-                            : {}
-                        }
-                      />
+                      {inputElementAndType(element)}
                     </Form.Item>
                   )}
                   {element.type === 'dropdown' && (
