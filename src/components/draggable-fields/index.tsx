@@ -16,13 +16,23 @@ const DraggableFields: React.FC<DraggableFieldsProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const [, drag] = useDrag({
+  const [{ isDragging }, drag] = useDrag({
     type: 'FORM_ELEMENT',
-    item: { id, index },
+    item: () => {
+      return { id, index };
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
   });
 
-  const [, drop] = useDrop({
+  const [{ handlerId }, drop] = useDrop({
     accept: 'FORM_ELEMENT',
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId(),
+      };
+    },
     hover: (
       item: { id: number; index: number },
       monitor: DropTargetMonitor
@@ -52,9 +62,16 @@ const DraggableFields: React.FC<DraggableFieldsProps> = ({
   });
 
   drag(drop(ref));
-
+  const opacity = isDragging ? 0 : 1;
   return (
-    <div ref={ref} style={{ cursor: 'move' }}>
+    <div
+      ref={ref}
+      style={{
+        cursor: 'move',
+        opacity,
+      }}
+      data-handler-id={handlerId}
+    >
       {children}
     </div>
   );
