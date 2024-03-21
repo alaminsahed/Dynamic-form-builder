@@ -7,6 +7,7 @@ import {
   EditOutlined,
   OrderedListOutlined,
   CreditCardOutlined,
+  FontColorsOutlined,
 } from '@ant-design/icons';
 
 export const fields = [
@@ -43,6 +44,11 @@ export const fields = [
 ];
 
 export const staticFields = [
+  {
+    type: 'header',
+    icon: <FontColorsOutlined />,
+    title: 'Header',
+  },
   {
     type: 'button',
     icon: <ArrowsAltOutlined />,

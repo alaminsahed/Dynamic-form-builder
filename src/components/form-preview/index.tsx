@@ -216,6 +216,16 @@ const FormPreview: React.FC<FormPreviewProps> = ({ formElements }) => {
                 <Radio.Group options={element.radioOptions || []} />
               </Form.Item>
             )}
+            {element.type === 'header' && (
+              <Form.Item key={index}>
+                {element.headerLevel === 'h1' && <h1>{element.label}</h1>}
+                {element.headerLevel === 'h2' && <h2>{element.label}</h2>}
+                {element.headerLevel === 'h3' && <h3>{element.label}</h3>}
+                {element.headerLevel === 'h4' && <h4>{element.label}</h4>}
+                {element.headerLevel === 'h5' && <h5>{element.label}</h5>}
+                {element.headerLevel === 'h6' && <h6>{element.label}</h6>}
+              </Form.Item>
+            )}
             {element.type === 'button' && (
               <Form.Item key={index}>
                 <Button
