@@ -24,6 +24,7 @@ export interface IElement {
     minRows: number;
     maxRows: number;
   };
+  showTime?: boolean;
 }
 
 export interface IElementBtnOptions extends IElement {

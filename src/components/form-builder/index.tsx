@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -40,6 +41,8 @@ const formLabel = (element) => {
       return 'Radio';
     case 'textarea':
       return 'Textarea';
+    case 'datepicker':
+      return 'Datepicker';
     default:
       return 'text';
   }
@@ -50,7 +53,15 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   setFormElements,
 }) => {
   const [{ canDrop, isOver }, drop] = useDrop({
-    accept: ['text', 'button', 'dropdown', 'checkbox', 'radio', 'textarea'],
+    accept: [
+      'text',
+      'button',
+      'dropdown',
+      'checkbox',
+      'radio',
+      'textarea',
+      'datepicker',
+    ],
     drop: (item: { type: FormType; id: number }) => handleDrop(item),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -304,6 +315,29 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                         autoSize={
                           element?.autoSize || { minRows: 3, maxRows: 5 }
                         }
+                      />
+                    </Form.Item>
+                  )}
+                  {element.type === 'datepicker' && (
+                    <Form.Item key={element.id} label={element.label}>
+                      <DatePicker
+                        placeholder={element.placeholder || 'Select date'}
+                        size={element.size}
+                        style={
+                          element.style && element.style.length > 0
+                            ? element.style.find(
+                                (s) =>
+                                  s.device === 'any' || s.device === 'desktop'
+                              )
+                            : {
+                                width: '100%',
+                              }
+                        }
+                        disabled={element.disabled}
+                        showTime={element.showTime}
+                        format={`YYYY-MM-DD${
+                          element.showTime ? ' hh:mm A' : ''
+                        }`}
                       />
                     </Form.Item>
                   )}

@@ -280,7 +280,8 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
         </>
       )}
       {(findSelectedElement.type === 'textarea' ||
-        findSelectedElement.type === 'text') && (
+        findSelectedElement.type === 'text' ||
+        findSelectedElement.type === 'datepicker') && (
         <div
           style={{
             marginBottom: '0.5rem',
@@ -292,6 +293,21 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
           >
             {' '}
             Disabled{' '}
+          </Checkbox>
+        </div>
+      )}
+      {findSelectedElement.type === 'datepicker' && (
+        <div
+          style={{
+            marginBottom: '0.5rem',
+          }}
+        >
+          <Checkbox
+            checked={(findSelectedElement as IElement).showTime}
+            onChange={(e) => handleKeyChange(e.target.checked, 'showTime')}
+          >
+            {' '}
+            Showtime{' '}
           </Checkbox>
         </div>
       )}

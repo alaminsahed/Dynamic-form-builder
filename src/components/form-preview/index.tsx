@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Button,
   Checkbox,
+  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -166,6 +167,35 @@ const FormPreview: React.FC<FormPreviewProps> = ({ formElements }) => {
                 {formErrors[element.key] && (
                   <div style={{ color: 'red' }}>{formErrors[element.key]}</div>
                 )}
+              </Form.Item>
+            )}
+            {element.type === 'datepicker' && (
+              <Form.Item label={element.label}>
+                <DatePicker
+                  placeholder={element.placeholder || ''}
+                  size={element.size}
+                  onBlur={(e) =>
+                    validateInput(
+                      e.target.value,
+                      element.validations,
+                      element.key
+                    )
+                  }
+                  style={
+                    element.style && element.style.length > 0
+                      ? element.style.find(
+                          (s) => s.device === 'any' || s.device === 'desktop'
+                        )
+                      : {
+                          width: '100%',
+                        }
+                  }
+                  disabled={element.disabled}
+                  showTime={element.showTime}
+                  format={
+                    element.showTime ? 'YYYY-MM-DD hh:mm A' : 'YYYY-MM-DD'
+                  }
+                />
               </Form.Item>
             )}
             {element.type === 'dropdown' && (
