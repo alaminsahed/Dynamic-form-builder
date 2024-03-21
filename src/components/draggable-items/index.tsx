@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "antd";
-import { useDrag } from "react-dnd";
+import { Button } from 'antd';
+import { useDrag } from 'react-dnd';
 
 const DraggableItem = ({ type, placeholder, className, style, icon }: any) => {
   const [, drag] = useDrag(
@@ -15,12 +14,12 @@ const DraggableItem = ({ type, placeholder, className, style, icon }: any) => {
     <div
       ref={drag}
       style={{
-        cursor: "move",
+        cursor: 'move',
       }}
     >
       <Button
         style={{
-          width: "100%",
+          width: '100%',
         }}
         icon={icon}
       >

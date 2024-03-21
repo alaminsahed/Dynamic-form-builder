@@ -6,8 +6,8 @@ import {
   DownOutlined,
   EditOutlined,
   OrderedListOutlined,
-  CreditCardOutlined,
   FontColorsOutlined,
+  InsertRowAboveOutlined,
 } from '@ant-design/icons';
 
 export const fields = [
@@ -58,8 +58,8 @@ export const staticFields = [
 
 export const structures = [
   {
-    type: 'section',
-    icon: <CreditCardOutlined />,
-    title: 'Section',
+    type: 'container',
+    icon: <InsertRowAboveOutlined />,
+    title: 'Container',
   },
 ];

@@ -246,6 +246,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         ref={drop}
         style={{
           height: 'calc(100vh - 200px)',
+          position: 'relative',
         }}
         onClick={(e) => {
           e.stopPropagation();
@@ -461,7 +462,12 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           </div>
         )}
         {isOver && canDrop && (
-          <div style={{ height: '30px', backgroundColor: 'yellow' }}></div>
+          <div
+            style={{
+              backgroundColor: 'yellow',
+              height: '30px',
+            }}
+          />
         )}
       </div>
     </DndProvider>

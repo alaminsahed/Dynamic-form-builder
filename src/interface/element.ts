@@ -51,4 +51,5 @@ export type FormType =
   | 'textarea'
   | 'datepicker'
   | 'button'
-  | 'header';
+  | 'header'
+  | 'container';
