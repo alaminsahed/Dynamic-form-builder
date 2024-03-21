@@ -109,60 +109,108 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
           value={findSelectedElement.label}
         />
       </div>
-      {findSelectedElement.type !== 'checkbox' && (
-        <>
-          <div
-            style={{
-              marginBottom: '0.5rem',
-            }}
-          >
-            <label
-              htmlFor="placeholder"
-              style={{ display: 'block', marginBottom: '0.2rem' }}
-            >
-              Placeholder
-            </label>
-            <Input
-              placeholder="Enter Placeholder"
-              onChange={(e) => handleKeyChange(e.target.value, 'placeholder')}
-              value={findSelectedElement.placeholder}
-            />
-          </div>
-          <div
-            style={{
-              marginBottom: '0.5rem',
-            }}
-          >
-            <label
-              htmlFor="style"
-              style={{ display: 'block', marginBottom: '0.2rem' }}
-            >
-              Size
-            </label>
-            <Select
-              defaultValue="medium"
-              onChange={(e) => handleKeyChange(e, 'size')}
-              value={findSelectedElement.size}
-              options={[
-                {
-                  label: 'Small',
-                  value: 'small',
-                },
-                {
-                  label: 'Middle',
-                  value: 'middle',
-                },
-                {
-                  label: 'Large',
-                  value: 'large',
-                },
-              ]}
+      {findSelectedElement.type !== 'checkbox' &&
+        findSelectedElement.type !== 'header' && (
+          <>
+            <div
               style={{
-                width: '100%',
+                marginBottom: '0.5rem',
               }}
-            />
-          </div>
-        </>
+            >
+              <label
+                htmlFor="placeholder"
+                style={{ display: 'block', marginBottom: '0.2rem' }}
+              >
+                Placeholder
+              </label>
+              <Input
+                placeholder="Enter Placeholder"
+                onChange={(e) => handleKeyChange(e.target.value, 'placeholder')}
+                value={findSelectedElement.placeholder}
+              />
+            </div>
+            <div
+              style={{
+                marginBottom: '0.5rem',
+              }}
+            >
+              <label
+                htmlFor="style"
+                style={{ display: 'block', marginBottom: '0.2rem' }}
+              >
+                Size
+              </label>
+              <Select
+                defaultValue="medium"
+                onChange={(e) => handleKeyChange(e, 'size')}
+                value={findSelectedElement.size}
+                options={[
+                  {
+                    label: 'Small',
+                    value: 'small',
+                  },
+                  {
+                    label: 'Middle',
+                    value: 'middle',
+                  },
+                  {
+                    label: 'Large',
+                    value: 'large',
+                  },
+                ]}
+                style={{
+                  width: '100%',
+                }}
+              />
+            </div>
+          </>
+        )}
+      {findSelectedElement.type === 'header' && (
+        <div
+          style={{
+            marginBottom: '0.5rem',
+          }}
+        >
+          <label
+            htmlFor="style"
+            style={{ display: 'block', marginBottom: '0.2rem' }}
+          >
+            Header Level
+          </label>
+          <Select
+            onChange={(e) => handleKeyChange(e, 'headerLevel')}
+            value={findSelectedElement.headerLevel}
+            options={[
+              {
+                label: 'H1',
+                value: 'h1',
+              },
+              {
+                label: 'H2',
+                value: 'h2',
+              },
+              {
+                label: 'H3',
+                value: 'h3',
+              },
+              {
+                label: 'H4',
+                value: 'h4',
+              },
+              {
+                label: 'H5',
+                value: 'h5',
+              },
+              {
+                label: 'H6',
+                value: 'h6',
+              },
+            ]}
+            style={{
+              width: '100%',
+            }}
+          />
+        </div>
       )}
       {findSelectedElement.type === 'textarea' && (
         <>
@@ -280,7 +328,8 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
         </>
       )}
       {(findSelectedElement.type === 'textarea' ||
-        findSelectedElement.type === 'text') && (
+        findSelectedElement.type === 'text' ||
+        findSelectedElement.type === 'datepicker') && (
         <div
           style={{
             marginBottom: '0.5rem',
@@ -292,6 +341,21 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
           >
             {' '}
             Disabled{' '}
+          </Checkbox>
+        </div>
+      )}
+      {findSelectedElement.type === 'datepicker' && (
+        <div
+          style={{
+            marginBottom: '0.5rem',
+          }}
+        >
+          <Checkbox
+            checked={(findSelectedElement as IElement).showTime}
+            onChange={(e) => handleKeyChange(e.target.checked, 'showTime')}
+          >
+            {' '}
+            Showtime{' '}
           </Checkbox>
         </div>
       )}

@@ -24,6 +24,8 @@ export interface IElement {
     minRows: number;
     maxRows: number;
   };
+  showTime?: boolean;
+  headerLevel?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 }
 
 export interface IElementBtnOptions extends IElement {
@@ -48,4 +50,6 @@ export type FormType =
   | 'dropdown'
   | 'textarea'
   | 'datepicker'
-  | 'button';
+  | 'button'
+  | 'header'
+  | 'container';

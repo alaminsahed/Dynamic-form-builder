@@ -3,11 +3,12 @@ import {
   DesktopOutlined,
   DownloadOutlined,
   EditOutlined,
+  ExclamationCircleFilled,
   EyeOutlined,
   MobileOutlined,
   TabletOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Col, Row, Space, Tooltip } from 'antd';
+import { Button, Card, Col, Modal, Row, Space, Tooltip } from 'antd';
 import { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -21,6 +22,7 @@ import {
 } from './components';
 import FormPreview from './components/form-preview';
 import { IElement } from './interface/element';
+const { confirm } = Modal;
 
 const App = () => {
   const [formElements, setFormElements] = useState<IElement[]>([]);
@@ -40,6 +42,18 @@ const App = () => {
     element.download = 'form.json';
     document.body.appendChild(element);
     element.click();
+  };
+
+  const showConfirm = () => {
+    confirm({
+      title: 'Do you Want to delete these items?',
+      icon: <ExclamationCircleFilled />,
+      content: 'This action cannot be undone',
+      onOk() {
+        setFormElements([]);
+      },
+      onCancel() {},
+    });
   };
 
   return (
@@ -182,9 +196,7 @@ const App = () => {
                 <>
                   <Tooltip title="Clear Form">
                     <Button
-                      onClick={() => {
-                        setFormElements([]);
-                      }}
+                      onClick={showConfirm}
                       icon={<CloseOutlined />}
                       htmlType="button"
                       type="default"

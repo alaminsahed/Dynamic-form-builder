@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Button,
   Checkbox,
+  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -168,6 +169,35 @@ const FormPreview: React.FC<FormPreviewProps> = ({ formElements }) => {
                 )}
               </Form.Item>
             )}
+            {element.type === 'datepicker' && (
+              <Form.Item label={element.label}>
+                <DatePicker
+                  placeholder={element.placeholder || ''}
+                  size={element.size}
+                  onBlur={(e) =>
+                    validateInput(
+                      e.target.value,
+                      element.validations,
+                      element.key
+                    )
+                  }
+                  style={
+                    element.style && element.style.length > 0
+                      ? element.style.find(
+                          (s) => s.device === 'any' || s.device === 'desktop'
+                        )
+                      : {
+                          width: '100%',
+                        }
+                  }
+                  disabled={element.disabled}
+                  showTime={element.showTime}
+                  format={
+                    element.showTime ? 'YYYY-MM-DD hh:mm A' : 'YYYY-MM-DD'
+                  }
+                />
+              </Form.Item>
+            )}
             {element.type === 'dropdown' && (
               <Form.Item key={index} label={element.label}>
                 <Select
@@ -184,6 +214,16 @@ const FormPreview: React.FC<FormPreviewProps> = ({ formElements }) => {
             {element.type === 'radio' && (
               <Form.Item key={index} label={element.label}>
                 <Radio.Group options={element.radioOptions || []} />
+              </Form.Item>
+            )}
+            {element.type === 'header' && (
+              <Form.Item key={index}>
+                {element.headerLevel === 'h1' && <h1>{element.label}</h1>}
+                {element.headerLevel === 'h2' && <h2>{element.label}</h2>}
+                {element.headerLevel === 'h3' && <h3>{element.label}</h3>}
+                {element.headerLevel === 'h4' && <h4>{element.label}</h4>}
+                {element.headerLevel === 'h5' && <h5>{element.label}</h5>}
+                {element.headerLevel === 'h6' && <h6>{element.label}</h6>}
               </Form.Item>
             )}
             {element.type === 'button' && (

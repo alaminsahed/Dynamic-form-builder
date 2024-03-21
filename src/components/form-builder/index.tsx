@@ -1,6 +1,8 @@
+import { CopyOutlined, DeleteOutlined } from '@ant-design/icons';
 import {
   Button,
   Checkbox,
+  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -12,14 +14,13 @@ import _ from 'lodash';
 import React from 'react';
 import { DndProvider, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DeleteOutlined } from '@ant-design/icons';
 
-import { DraggableFields } from '../draggable-fields';
 import {
   FormType,
   IElement,
   IElementBtnOptions,
 } from '../../interface/element';
+import { DraggableFields } from '../draggable-fields';
 
 interface FormBuilderProps {
   formElements: IElement[] | IElementBtnOptions[];
@@ -40,6 +41,10 @@ const formLabel = (element) => {
       return 'Radio';
     case 'textarea':
       return 'Textarea';
+    case 'datepicker':
+      return 'Datepicker';
+    case 'header':
+      return 'Header';
     default:
       return 'text';
   }
@@ -50,7 +55,16 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   setFormElements,
 }) => {
   const [{ canDrop, isOver }, drop] = useDrop({
-    accept: ['text', 'button', 'dropdown', 'checkbox', 'radio', 'textarea'],
+    accept: [
+      'text',
+      'button',
+      'dropdown',
+      'checkbox',
+      'radio',
+      'textarea',
+      'datepicker',
+      'header',
+    ],
     drop: (item: { type: FormType; id: number }) => handleDrop(item),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -94,6 +108,9 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     if (item.type === 'button') {
       newElement.appearance = 'primary';
       newElement.block = true;
+    }
+    if (item.type === 'header') {
+      newElement.headerLevel = 'h3';
     }
 
     setFormElements([...formElements, newElement]);
@@ -229,6 +246,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         ref={drop}
         style={{
           height: 'calc(100vh - 200px)',
+          position: 'relative',
         }}
         onClick={(e) => {
           e.stopPropagation();
@@ -307,6 +325,29 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                       />
                     </Form.Item>
                   )}
+                  {element.type === 'datepicker' && (
+                    <Form.Item key={element.id} label={element.label}>
+                      <DatePicker
+                        placeholder={element.placeholder || 'Select date'}
+                        size={element.size}
+                        style={
+                          element.style && element.style.length > 0
+                            ? element.style.find(
+                                (s) =>
+                                  s.device === 'any' || s.device === 'desktop'
+                              )
+                            : {
+                                width: '100%',
+                              }
+                        }
+                        disabled={element.disabled}
+                        showTime={element.showTime}
+                        format={`YYYY-MM-DD${
+                          element.showTime ? ' hh:mm A' : ''
+                        }`}
+                      />
+                    </Form.Item>
+                  )}
                   {element.type === 'dropdown' && (
                     <Form.Item key={element.id} label={element.label}>
                       <Select
@@ -335,6 +376,16 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                       <Radio.Group options={element?.radioOptions || []} />
                     </Form.Item>
                   )}
+                  {element.type === 'header' && (
+                    <Form.Item key={element.id}>
+                      {element.headerLevel === 'h1' && <h1>{element.label}</h1>}
+                      {element.headerLevel === 'h2' && <h2>{element.label}</h2>}
+                      {element.headerLevel === 'h3' && <h3>{element.label}</h3>}
+                      {element.headerLevel === 'h4' && <h4>{element.label}</h4>}
+                      {element.headerLevel === 'h5' && <h5>{element.label}</h5>}
+                      {element.headerLevel === 'h6' && <h6>{element.label}</h6>}
+                    </Form.Item>
+                  )}
                   {element.type === 'button' && (
                     <Form.Item key={element.id}>
                       <Button
@@ -361,6 +412,26 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                     }}
                   >
                     <Button
+                      type="primary"
+                      icon={<CopyOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const id = Number(_.uniqueId());
+                        const newIndex = formElements.length;
+                        const newElement = {
+                          ...element,
+                          id,
+                          key: element.type + '_' + id,
+                          index: newIndex,
+                          active: false,
+                        };
+                        setFormElements([...formElements, newElement]);
+                      }}
+                    />
+                    <Button
+                      style={{
+                        marginLeft: 5,
+                      }}
                       type="primary"
                       danger
                       icon={<DeleteOutlined />}
@@ -391,7 +462,12 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           </div>
         )}
         {isOver && canDrop && (
-          <div style={{ height: '30px', backgroundColor: 'yellow' }}></div>
+          <div
+            style={{
+              backgroundColor: 'yellow',
+              height: '30px',
+            }}
+          />
         )}
       </div>
     </DndProvider>

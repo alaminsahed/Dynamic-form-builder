@@ -2,7 +2,7 @@
 import { Tabs, TabsProps } from 'antd';
 import React from 'react';
 import { IElement } from '../../interface/element';
-import RulesElements from './components/Rules';
+import RulesElements from './components/rules';
 import MainFieldOptions from './components/main';
 import DynamicStyles from './components/styles';
 
