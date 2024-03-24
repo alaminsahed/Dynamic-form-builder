@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
 import {
   Button,
   Checkbox,
+  Col,
   DatePicker,
   Form,
   Input,
   InputNumber,
   Radio,
+  Row,
   Select,
 } from 'antd';
+import React, { useState } from 'react';
 import { IElement, IElementBtnOptions } from '../../interface/element';
 
 interface FormPreviewProps {
@@ -225,6 +227,56 @@ const FormPreview: React.FC<FormPreviewProps> = ({ formElements }) => {
                 {element.headerLevel === 'h5' && <h5>{element.label}</h5>}
                 {element.headerLevel === 'h6' && <h6>{element.label}</h6>}
               </Form.Item>
+            )}
+            {element.type === 'container' && (
+              <>
+                <label
+                  htmlFor="container"
+                  style={{
+                    display: 'block',
+                    marginBottom: '10px',
+                  }}
+                >
+                  {element.label}
+                </label>
+                <div
+                  key={element.id}
+                  style={{
+                    padding: '20px',
+                    border: '1px solid #d6cfcf',
+                    borderRadius: '5px',
+                    marginBottom: '10px',
+                  }}
+                >
+                  {element.children ? (
+                    <Row gutter={[8, 8]}>
+                      {element.children.map((child) => (
+                        <Col
+                          key={child.id}
+                          span={element.grid * 2 || 12}
+                          style={{
+                            border: child.active ? '2px dashed blue' : 'none',
+                            padding: child.active ? '10px' : '5px',
+                            borderRadius: '5px',
+                            position: 'relative',
+                            transition: '200ms all ease-in-out',
+                          }}
+                        >
+                          {child.type === 'text' && (
+                            <Form.Item
+                              style={{ marginBottom: 0 }}
+                              key={child.id}
+                              label={child.label}
+                            >
+                              {inputElementAndType(child)}
+                            </Form.Item>
+                          )}
+                        </Col>
+                      ))}
+                    </Row>
+                  ) : null}
+                </div>
+              </>
             )}
             {element.type === 'button' && (
               <Form.Item key={index}>

@@ -110,7 +110,8 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
         />
       </div>
       {findSelectedElement.type !== 'checkbox' &&
-        findSelectedElement.type !== 'header' && (
+        findSelectedElement.type !== 'header' &&
+        findSelectedElement.type !== 'container' && (
           <>
             <div
               style={{
@@ -165,6 +166,58 @@ const MainFieldOptions: React.FC<MainFieldOptionsProps> = ({
             </div>
           </>
         )}
+      {findSelectedElement.type === 'container' && (
+        <div
+          style={{
+            marginBottom: '0.5rem',
+          }}
+        >
+          <label
+            htmlFor="style"
+            style={{ display: 'block', marginBottom: '0.2rem' }}
+          >
+            Grid
+          </label>
+          <Select
+            defaultValue={1}
+            onChange={(e) => handleKeyChange(e, 'grid')}
+            value={findSelectedElement.grid}
+            options={[
+              {
+                label: 'Col-1',
+                value: 1,
+              },
+              {
+                label: 'Col-2',
+                value: 2,
+              },
+              {
+                label: 'Col-3',
+                value: 3,
+              },
+              {
+                label: 'Col-4',
+                value: 4,
+              },
+              {
+                label: 'Col-6',
+                value: 6,
+              },
+              {
+                label: 'Col-8',
+                value: 8,
+              },
+              {
+                label: 'Col-12',
+                value: 12,
+              },
+            ]}
+            style={{
+              width: '100%',
+            }}
+          />
+        </div>
+      )}
       {findSelectedElement.type === 'header' && (
         <div
           style={{

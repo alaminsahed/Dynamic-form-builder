@@ -9,7 +9,7 @@ import {
   TabletOutlined,
 } from '@ant-design/icons';
 import { Button, Card, Col, Modal, Row, Space, Tooltip } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
@@ -34,7 +34,6 @@ const App = () => {
   const onExport = () => {
     const data = {
       formElements,
-      responsiveView,
     };
     const element = document.createElement('a');
     const file = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -55,6 +54,26 @@ const App = () => {
       onCancel() {},
     });
   };
+
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        const newFormElements = formElements.map((element) => {
+          if (element.children) {
+            element.children = element.children.map((childElement) => {
+              return { ...childElement, active: false };
+            });
+          }
+          return { ...element, active: false };
+        });
+        setFormElements(newFormElements);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [formElements, setFormElements]);
 
   return (
     <DndProvider backend={HTML5Backend}>

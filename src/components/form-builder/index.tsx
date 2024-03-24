@@ -1,12 +1,20 @@
-import { CopyOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  CopyOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Checkbox,
+  Col,
   DatePicker,
   Form,
   Input,
   InputNumber,
+  Modal,
   Radio,
+  Row,
   Select,
   message,
 } from 'antd';
@@ -15,6 +23,7 @@ import React from 'react';
 import { DndProvider, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
+import { fields } from '..';
 import {
   FormType,
   IElement,
@@ -45,6 +54,8 @@ const formLabel = (element) => {
       return 'Datepicker';
     case 'header':
       return 'Header';
+    case 'container':
+      return 'Container';
     default:
       return 'text';
   }
@@ -54,6 +65,14 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   formElements,
   setFormElements,
 }) => {
+  const [containerAddModal, setContainerAddModal] = React.useState<{
+    open: boolean;
+    data: any;
+  }>({
+    open: false,
+    data: null,
+  });
+
   const [{ canDrop, isOver }, drop] = useDrop({
     accept: [
       'text',
@@ -64,6 +83,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       'textarea',
       'datepicker',
       'header',
+      'container',
     ],
     drop: (item: { type: FormType; id: number }) => handleDrop(item),
     collect: (monitor) => ({
@@ -104,6 +124,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         { label: 'Option 2', value: 'Option 2' },
         { label: 'Option 3', value: 'Option 3' },
       ];
+    }
+    if (item.type === 'container') {
+      newElement.children = [];
+      newElement.grid = 6;
     }
     if (item.type === 'button') {
       newElement.appearance = 'primary';
@@ -386,6 +410,180 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                       {element.headerLevel === 'h6' && <h6>{element.label}</h6>}
                     </Form.Item>
                   )}
+                  {element.type === 'container' && (
+                    <>
+                      <label
+                        htmlFor="container"
+                        style={{
+                          display: 'block',
+                          marginBottom: '10px',
+                        }}
+                      >
+                        {element.label}
+                      </label>
+                      <div
+                        key={element.id}
+                        style={{
+                          padding: '20px',
+                          border: '1px solid #d6cfcf',
+                          borderRadius: '5px',
+                          marginBottom: '10px',
+                        }}
+                      >
+                        {element.children ? (
+                          <Row gutter={[8, 8]}>
+                            {element.children.map((child) => (
+                              <Col
+                                key={child.id}
+                                span={element.grid * 2 || 12}
+                                style={{
+                                  border: child.active
+                                    ? '2px dashed blue'
+                                    : 'none',
+                                  padding: child.active ? '10px' : '5px',
+                                  borderRadius: '5px',
+                                  position: 'relative',
+                                  transition: '200ms all ease-in-out',
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const findContainer = formElements.find(
+                                    (formElement) =>
+                                      formElement.id === element.id
+                                  );
+                                  if (!findContainer) {
+                                    message.error('Container not found');
+                                    return;
+                                  }
+                                  const updateSelectedChild =
+                                    findContainer.children.map((item) => {
+                                      if (item.id === child.id) {
+                                        return { ...item, active: true };
+                                      }
+                                      return { ...item, active: false };
+                                    });
+                                  const updatedFormElements = formElements.map(
+                                    (formElement) => {
+                                      if (formElement.id === element.id) {
+                                        return {
+                                          ...formElement,
+                                          children: updateSelectedChild,
+                                        };
+                                      }
+                                      return formElement;
+                                    }
+                                  );
+                                  setFormElements(updatedFormElements);
+                                }}
+                              >
+                                {child.type === 'text' && (
+                                  <Form.Item
+                                    style={{ marginBottom: 0 }}
+                                    key={child.id}
+                                    label={child.label}
+                                    rules={child?.validations?.map(
+                                      (validation) => ({
+                                        [validation.type]: [
+                                          {
+                                            validator: (_, value) =>
+                                              validateInput(
+                                                value,
+                                                element.validations
+                                              ),
+                                          },
+                                        ],
+                                      })
+                                    )}
+                                  >
+                                    {inputElementAndType(child)}
+                                  </Form.Item>
+                                )}
+                                {child.active && (
+                                  <div
+                                    style={{
+                                      position: 'absolute',
+                                      top: -40,
+                                      right: 0,
+                                    }}
+                                  >
+                                    <Button
+                                      type="primary"
+                                      icon={<CopyOutlined />}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const id = Number(_.uniqueId());
+                                        const newIndex = 0;
+                                        const findContainer = formElements.find(
+                                          (formElement) =>
+                                            formElement.id === element.id
+                                        );
+                                        if (!findContainer) {
+                                          message.error('Container not found');
+                                          return;
+                                        }
+                                        const newElement = {
+                                          ...child,
+                                          id,
+                                          key: child.type + '_' + id,
+                                          index: newIndex,
+                                          active: false,
+                                        };
+                                        findContainer.children.push(newElement);
+                                        setFormElements([...formElements]);
+                                      }}
+                                    />
+                                    <Button
+                                      style={{
+                                        marginLeft: 5,
+                                      }}
+                                      type="primary"
+                                      danger
+                                      icon={<DeleteOutlined />}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const findContainer = formElements.find(
+                                          (formElement) =>
+                                            formElement.id === element.id
+                                        );
+                                        if (!findContainer) {
+                                          message.error('Container not found');
+                                          return;
+                                        }
+                                        const newChildren =
+                                          findContainer.children.filter(
+                                            (item) => item.id !== child.id
+                                          );
+                                        findContainer.children = newChildren;
+                                        setFormElements([...formElements]);
+                                      }}
+                                    />
+                                  </div>
+                                )}
+                              </Col>
+                            ))}
+                          </Row>
+                        ) : null}
+                        <Button
+                          htmlType="button"
+                          type="primary"
+                          icon={<PlusOutlined />}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: '10px',
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setContainerAddModal({
+                              open: true,
+                              data: element,
+                            });
+                          }}
+                        />
+                      </div>
+                    </>
+                  )}
                   {element.type === 'button' && (
                     <Form.Item key={element.id}>
                       <Button
@@ -470,6 +668,115 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           />
         )}
       </div>
+      <Modal
+        title="Click to add elements to container"
+        open={containerAddModal.open}
+        onCancel={() =>
+          setContainerAddModal({
+            open: false,
+            data: null,
+          })
+        }
+        footer={null}
+        width={700}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '20px',
+          }}
+        >
+          <Input placeholder="Search elements" prefix={<SearchOutlined />} />
+        </div>
+        <div>
+          <div>
+            <label
+              htmlFor="form_fields"
+              style={{
+                display: 'block',
+                marginBottom: '10px',
+              }}
+            >
+              <strong>Form Fields</strong>
+            </label>
+            <Row gutter={[8, 8]}>
+              {fields.map((field) => (
+                <Col span={8} key={field.type}>
+                  <div>
+                    <Button
+                      style={{
+                        width: '100%',
+                      }}
+                      htmlType="button"
+                      icon={field.icon}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const id = Number(_.uniqueId());
+                        let newIndex = 0;
+                        const findElement = formElements.find(
+                          (f) => f.id === containerAddModal.data.id
+                        );
+                        if (!findElement) {
+                          message.error('Container not found');
+                          return;
+                        }
+                        if (findElement.children) {
+                          newIndex = findElement.children.length;
+                        }
+                        const newElement: any = {
+                          ...field,
+                          id,
+                          key: field.type + '_' + id,
+                          label: formLabel(field),
+                          size: 'middle',
+                          index: newIndex,
+                        };
+                        delete newElement.icon;
+                        if (field.type === 'checkbox') {
+                          newElement.checkboxOptions = [
+                            { label: 'Option 1', value: 'Option 1' },
+                            { label: 'Option 2', value: 'Option 2' },
+                            { label: 'Option 3', value: 'Option 3' },
+                          ];
+                        }
+                        if (field.type === 'dropdown') {
+                          newElement.dropdownOptions = [
+                            { label: 'Option 1', value: 'Option 1' },
+                            { label: 'Option 2', value: 'Option 2' },
+                            { label: 'Option 3', value: 'Option 3' },
+                          ];
+                        }
+                        if (field.type === 'radio') {
+                          newElement.radioOptions = [
+                            { label: 'Option 1', value: 'Option 1' },
+                            { label: 'Option 2', value: 'Option 2' },
+                            { label: 'Option 3', value: 'Option 3' },
+                          ];
+                        }
+                        if (findElement.children) {
+                          findElement.children.push(newElement);
+                        } else {
+                          findElement.children = [newElement];
+                        }
+                        setFormElements([...formElements]);
+                        message.success('Element added to container');
+                        setContainerAddModal({
+                          open: false,
+                          data: null,
+                        });
+                      }}
+                    >
+                      {field.title}
+                    </Button>
+                  </div>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </div>
+      </Modal>
     </DndProvider>
   );
 };
