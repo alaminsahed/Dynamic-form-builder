@@ -5,9 +5,12 @@ import {
   CheckSquareOutlined,
   DownOutlined,
   EditOutlined,
-  OrderedListOutlined,
   FontColorsOutlined,
   InsertRowAboveOutlined,
+  MinusOutlined,
+  OrderedListOutlined,
+  SwapOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 
 export const fields = [
@@ -40,6 +43,21 @@ export const fields = [
     type: 'radio',
     icon: <CheckCircleOutlined />,
     title: 'Radio',
+  },
+  {
+    type: 'upload',
+    icon: <UploadOutlined />,
+    title: 'Upload',
+  },
+  {
+    type: 'switch',
+    icon: <SwapOutlined />,
+    title: 'Switch',
+  },
+  {
+    type: 'slider',
+    icon: <MinusOutlined />,
+    title: 'Slider',
   },
 ];
 
